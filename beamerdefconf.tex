@@ -1,0 +1,170 @@
+\documentclass{beamer}
+\usetheme{Singapore}
+\usepackage{default}
+\usepackage[utf8]{inputenc}
+\usepackage[version=0.96]{pgf}
+
+
+%tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,backgrounds,calc,trees,shapes,snakes,automata,backgrounds,petri}
+
+
+\newcommand{\cmdtikz}
+{
+\tikzstyle{transition}=[circle,draw=black!75,minimum size=1cm]
+  \tikzstyle{etou}=[transition,circle,fill=blue!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=3,fill=red!75]
+  \tikzstyle{store}= [transition,diamond,fill=green!75]
+  \tikzstyle{move}= [transition,rectangle,fill=yellow!75]
+  \tikzstyle{expl}= [transition,rectangle]
+ }
+\newcommand{\st}[2]{\node [store] (#1) [#2]{$Store$}}
+\newcommand{\mv}[2]{\node [move] (#1) [#2]{$Move$}}
+\newcommand{\expl}[3]{\node [expl] (#1) [#2]{#3}}
+
+\newcommand{\et}[3]{\node [etou] (#1) [#2]{#3 $\wedge$}}
+\newcommand{\ou}[3]{ \node [etou] (#1)  [#2] {#3 $\vee$}}
+
+\newcommand{\eq}[3]{\node [check] (#1) [#2]{$eq_{#3}$}}
+\newcommand{\peq}[3]{\node [check] (#1) [#2]{ $\overline{eq_{#3}}$}}
+\newcommand{\tl}[3]{\node [check] (#1) [#2]{ $#3$}}
+\newcommand{\ntl}[3]{\node [check] (#1) [#2]{ $\overline{#3}$}}
+\newcommand{\rt}[1]{edge [pre] (#1)}
+\newcommand{\etat}[2]{\node [transition,regular polygon,regular polygon sides=4] (q#1) [#2]  {$q_{#1}$}}
+
+%insert tikz in beamer
+\newcommand{\inserttikz}[2]{
+\begin{center}
+  \begin{figure}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[node distance=2cm,>=stealth',bend angle=45,auto]
+    \cmdtikz
+    #1
+\end{tikzpicture}
+
+}
+
+\caption{#2}
+\end{figure}
+\end{center}
+}
+
+
+%conex hull
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+
+\newcommand{\convexpath}[2]{
+[   
+    create hullnodes/.code={
+        \global\edef\namelist{#1}
+        \foreach [count=\counter] \nodename in \namelist {
+            \global\edef\numberofnodes{\counter}
+            \node at (\nodename) [draw=none,name=hullnode\counter] {};
+        }
+        \node at (hullnode\numberofnodes) [name=hullnode0,draw=none] {};
+        \pgfmathtruncatemacro\lastnumber{\numberofnodes+1}
+        \node at (hullnode1) [name=hullnode\lastnumber,draw=none] {};
+    },
+    create hullnodes
+]
+($(hullnode1)!#2!-90:(hullnode0)$)
+\foreach [
+    evaluate=\currentnode as \previousnode using \currentnode-1,
+    evaluate=\currentnode as \nextnode using \currentnode+1
+    ] \currentnode in {1,...,\numberofnodes} {
+-- ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode)$)
+  let \p1 = ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode) - (hullnode\currentnode)$),
+    \n1 = {atan2(\x1,\y1)},
+    \p2 = ($(hullnode\currentnode)!#2!90:(hullnode\nextnode) - (hullnode\currentnode)$),
+    \n2 = {atan2(\x2,\y2)},
+    \n{delta} = {-Mod(\n1-\n2,360)}
+  in 
+    {arc [start angle=\n1, delta angle=\n{delta}, radius=#2]}
+}
+-- cycle
+}
+
+
+
+
+\begin{document}
+
+\begin{frame}{titre}
+\inserttikz{
+
+\node [transition,regular polygon,regular polygon sides=4] (q1)  {$q_1$};
+\etat {2} {below of=q1};
+\etat {3} {below of=q2};
+
+
+\ou {ou}{right of= q1}{}
+\rt {q1};
+\etat{5}{right of= ou}
+  \rt {ou};
+\etat{4}{above of= q5}
+  \rt {ou};
+  
+  
+\et {et}{right of= q2}{}
+\rt {q2};
+\etat{6}{right of= et}
+  \rt {et};
+\etat{7}{below of= q6}
+  \rt {et};
+
+\peq{peq}{right of= q4}{k}
+\rt{q4};
+
+
+\eq{eq}{right of= q5}{k}
+\rt{q5};
+
+
+\tl{ta}{right of= q7}{a}
+\rt{q7};
+
+\ntl{tb}{right of= q3}{a}
+\rt{q3};
+
+
+
+\et {et2}{right of= q6}{}
+\rt {q6};
+\etat{9}{right of= et2}
+  \rt {et2};
+\etat{8}{above of= q9}
+  \rt {et2};
+
+
+\st{store}{above of= q8}
+  \rt {q8};
+\etat{10}{right of= store}
+  \rt {store};
+  
+  
+\mv{move}{right of= q10}
+\rt {q10};
+\etat{11}{below of= move}
+\rt {move};
+
+\mv{move2}{right of= q9}
+\rt {q9};
+\etat{12}{right of= move2}
+\rt {move2};
+
+\node [draw=none, above of=q1] (invi)  {};
+
+
+
+}
+%{$a^nb^m$}
+
+\end{frame}
+
+
+
+\end{document}
+

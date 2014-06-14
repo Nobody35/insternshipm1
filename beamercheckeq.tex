@@ -1,0 +1,170 @@
+\documentclass{beamer}
+\usetheme{Singapore}
+\usepackage{default}
+\usepackage[utf8]{inputenc}
+\usepackage[version=0.96]{pgf}
+
+
+%tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,backgrounds,calc,trees,shapes,snakes,automata,backgrounds,petri}
+
+
+\newcommand{\cmdtikz}
+{
+\tikzstyle{transition}=[circle,draw=black!75,minimum size=1cm]
+  \tikzstyle{etou}=[transition,circle,fill=blue!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=3,fill=red!75]
+  \tikzstyle{store}= [transition,diamond,fill=green!75]
+  \tikzstyle{move}= [transition,rectangle,fill=yellow!75]
+  \tikzstyle{expl}= [transition,rectangle]
+ }
+\newcommand{\st}[2]{\node [store] (#1) [#2]{$Store$}}
+\newcommand{\mv}[2]{\node [move] (#1) [#2]{$Move$}}
+\newcommand{\expl}[3]{\node [expl] (#1) [#2]{#3}}
+
+\newcommand{\et}[3]{\node [etou] (#1) [#2]{#3 $\wedge$}}
+\newcommand{\ou}[3]{ \node [etou] (#1)  [#2] {#3 $\vee$}}
+
+\newcommand{\eq}[3]{\node [check] (#1) [#2]{$eq_{#3}$}}
+\newcommand{\peq}[3]{\node [check] (#1) [#2]{ $\overline{eq_{#3}}$}}
+\newcommand{\tl}[3]{\node [check] (#1) [#2]{ $#3$}}
+\newcommand{\ntl}[3]{\node [check] (#1) [#2]{ $\overline{#3}$}}
+\newcommand{\rt}[1]{edge [pre] (#1)}
+
+%insert tikz in beamer
+\newcommand{\inserttikz}[2]{
+\begin{center}
+  \begin{figure}
+    \scalebox{0.6}{
+    \begin{tikzpicture}[node distance=2cm,>=stealth',bend angle=45,auto]
+    \cmdtikz
+    #1
+\end{tikzpicture}
+
+}
+
+\caption{#2}
+\end{figure}
+\end{center}
+}
+
+
+%conex hull
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+
+\newcommand{\convexpath}[2]{
+[   
+    create hullnodes/.code={
+        \global\edef\namelist{#1}
+        \foreach [count=\counter] \nodename in \namelist {
+            \global\edef\numberofnodes{\counter}
+            \node at (\nodename) [draw=none,name=hullnode\counter] {};
+        }
+        \node at (hullnode\numberofnodes) [name=hullnode0,draw=none] {};
+        \pgfmathtruncatemacro\lastnumber{\numberofnodes+1}
+        \node at (hullnode1) [name=hullnode\lastnumber,draw=none] {};
+    },
+    create hullnodes
+]
+($(hullnode1)!#2!-90:(hullnode0)$)
+\foreach [
+    evaluate=\currentnode as \previousnode using \currentnode-1,
+    evaluate=\currentnode as \nextnode using \currentnode+1
+    ] \currentnode in {1,...,\numberofnodes} {
+-- ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode)$)
+  let \p1 = ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode) - (hullnode\currentnode)$),
+    \n1 = {atan2(\x1,\y1)},
+    \p2 = ($(hullnode\currentnode)!#2!90:(hullnode\nextnode) - (hullnode\currentnode)$),
+    \n2 = {atan2(\x2,\y2)},
+    \n{delta} = {-Mod(\n1-\n2,360)}
+  in 
+    {arc [start angle=\n1, delta angle=\n{delta}, radius=#2]}
+}
+-- cycle
+}
+
+
+
+
+\begin{document}
+
+\begin{frame}{titre}
+\inserttikz{
+
+\tikzstyle{triangleinvi}= [transition,fill=white, regular polygon,regular polygon sides=3,dashed]
+ \node [transition,regular polygon, regular polygon sides = 4] (q0)  {$q0$};
+ \mv {move}{right of= q0} 
+    edge [pre] (q0);
+  \st {store}{right of= move}
+    \rt {move};    
+ \et {big}{right of= store}{}
+    \rt{store}
+    edge [post,bend right] (move);
+ \ou {ou}{right of= big}{$k$ :}
+    \rt{big};
+ \node (invi6) [circle,dashed,above of=ou] {}
+  edge [dashed,pre] (big);
+ \node (invi7) [draw=none,below of=ou] {}
+  edge [dashed,pre] (big);
+ \ou {ou1}{above of= invi6}{$1$ :}
+    \rt{big}
+    edge [dashed] (ou);
+ \node (invi4) [triangleinvi,below right of=ou1] {}
+    edge [pre,dashed] (ou1);
+ \node (invi5) [triangleinvi,right of=ou1] {}
+  edge [pre,dashed] (ou1);
+ \ou {oun}{below of= invi7}{$n$ :}
+    \rt{big}
+    edge [dashed] (ou);
+ \node (invi2) [triangleinvi,right of=oun] {}
+    edge [pre,dashed] (oun);
+ \node (invi3) [triangleinvi,above right of=oun] {}
+  edge [pre,dashed] (oun);
+ 
+ \node (invi) [draw=none,right of=ou] {};
+ \eq {eq}{above right of=invi}{k+1}
+    \rt{ou};
+ \peq {peq}{below right of=invi}{k}
+    \rt{ou};
+ 
+ 
+  
+  
+
+   \begin{pgfonlayer}{background}
+  \pause
+ %create
+  \expl{cr}{below of=store}{create};
+  \fill[green,opacity=0.3] \convexpath{move,store.north,store,cr,store,store.north,big}{23pt};
+  
+  \pause
+  %delete
+  \expl{dl1}{right of=eq}{delete};
+  \fill[black,opacity=0.3] \convexpath{ou,eq,eq.north,eq,dl1}{23pt};
+  
+  \pause
+  %delete
+  \expl{dl2}{right of=peq}{delete};
+  \fill[black,opacity=0.3] \convexpath{ou,peq,dl2,peq}{23pt};
+  
+  \pause
+  %for 
+  \node (invi2) [draw=none,left of=ou1] {};
+   \expl{for}{left of=invi2} {for $k$ from $1$ to $n$};
+  \fill[blue,opacity=0.3] \convexpath{for.west,for,ou1,big,ou1,ou,oun,big,ou,ou1}{23pt};
+  
+  
+  \end{pgfonlayer}
+ 
+}
+{Progressively finer.}
+
+\end{frame}
+
+
+
+\end{document}
+

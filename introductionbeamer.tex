@@ -1,0 +1,198 @@
+\documentclass{beamer}
+\usetheme{Singapore}
+\usepackage[utf8]{inputenc}
+\usepackage{default}
+
+\newcommand{\insertfigure}[3] {
+
+\begin{minipage}[b]{#2\linewidth}
+    \includegraphics[width=#2\linewidth]{#1} 
+    \caption{#3} 
+\end{minipage} }
+
+\newcommand{\insertf}[2]{\insertfigure{#1}{0.9}{#2}}
+
+
+%insertpicture in beamer
+\newcommand{\insertpicture}[2]{
+\begin{center}
+  \begin{figure}
+    \insertf{#1}{#2}
+ \end{figure}
+\end{center}
+}
+
+
+\begin{document}
+
+\begin{frame}{Coventry}
+  \insertpicture{pictures/coventry.jpg}{Coventry}
+\end{frame}
+\begin{frame}{History.}
+\begin{columns}[T] % align columns
+\begin{column}{.48\textwidth}
+\begin{figure}
+  
+  \insertf{coventryb.jpg}{Coventry bombed.}
+  \pause
+  \insertf{pictures/crypto.jpg}{Crypto.}
+  \pause
+
+ 
+\end{figure}
+\end{column}%
+\begin{column}{.40\textwidth}
+
+\begin{figure}
+  
+  \insertf{pictures/Sherlock.jpg}{Sherlock.}
+  \pause
+  \insertf{pictures/consp.jpg}{Conspiracy.}
+  
+ 
+\end{figure}
+
+  \end{column}%
+\end{columns}
+
+\end{frame}
+
+%uk seule
+\begin{frame}{Geography}
+  \begin{figure}
+  
+     \begin{center}
+	 \includegraphics[width=1\linewidth]{pictures/uk.pdf}
+	 
+  
+    \end{center}
+
+    
+  \end{figure}
+
+\end{frame}
+
+%coventry
+
+\begin{frame}{Geography}
+  \begin{figure}
+  
+     \begin{center}
+	 \includegraphics[width=1\linewidth]{pictures/coventryalone.pdf}
+	 
+  
+    \end{center}
+
+    
+  \end{figure}
+
+\end{frame}
+
+
+%rugby
+
+
+\begin{frame}{Geography}
+  \begin{figure}
+  
+     \begin{center}
+	 \includegraphics[width=1\linewidth]{pictures/covr.pdf}
+	 
+  
+    \end{center}
+
+    
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}{Geography}
+  \begin{figure}
+  
+  \begin{minipage}[b]{0.8\linewidth}
+     \begin{center}
+	 \includegraphics[width=0.8\linewidth]{pictures/covr.pdf}
+	 
+  
+    \end{center}
+
+    
+  \end{minipage} 
+  \end{figure}
+  
+  \begin{figure}
+  \begin{minipage}[b]{0.5\linewidth}
+     \begin{center}
+	 \includegraphics[width=0.5\linewidth]{pictures/rugby.pdf}
+  
+    \end{center}
+
+    
+  \end{minipage}
+   \end{figure}
+
+  \end{frame}
+ 
+
+\begin{frame}{Geography}
+  \begin{figure}
+  
+  \begin{minipage}[b]{0.7\linewidth}
+     \begin{center}
+	 \includegraphics[width=0.7\linewidth]{pictures/covrl.pdf}
+	 
+  
+    \end{center}
+
+    
+  \end{minipage} 
+  \end{figure}
+  \begin{minipage}{0.6\linewidth}
+  
+  \begin{columns}[c] % align columns
+\begin{column}{.6\textwidth}
+\begin{figure}
+  
+ \insertf{pictures/rugby.pdf}{Rugby}
+  \
+
+ 
+\end{figure}
+\end{column}%
+\begin{column}{.7\textwidth}
+
+\begin{figure}
+  
+  \insertf{pictures/saracens.pdf}{Saracens.}
+  \pause
+ 
+\end{figure}
+
+  \end{column}%
+\begin{column}{.3\textwidth}
+
+\begin{figure}
+  Parce que Toulon!!! 
+  \insertf{pictures/rct.pdf}
+  
+ 
+\end{figure}
+
+  \end{column}%
+
+  \end{columns}
+
+\end{minipage}
+
+\end{frame} 
+
+
+\begin{frame}{Tutors}
+  
+\end{frame}
+\begin{frame}{Data words and register automatas.}
+ 
+\end{frame}
+
+
+\end{document}

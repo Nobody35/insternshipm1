@@ -1,0 +1,85 @@
+\documentclass[a4paper,10pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[version=0.96]{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,shapes,snakes,automata,backgrounds,petri}
+
+\newcommand{\st}[2]{\node [store] (#1) [#2]{$Store$}}
+\newcommand{\mv}[2]{\node [move] (#1) [#2]{$Move$}}
+
+\newcommand{\et}[3]{\node [etou] (#1) [#2]{#3 $\wedge$}}
+\newcommand{\ou}[3]{ \node [etou] (#1)  [#2] {#3 $\vee$}}
+
+\newcommand{\eq}[3]{\node [check] (#1) [#2]{$eq_{#3}$}}
+\newcommand{\peq}[3]{\node [check] (#1) [#2]{ $\overline{eq_{#3}}$}}
+\newcommand{\tl}[3]{\node [check] (#1) [#2]{ $#3$}}
+\newcommand{\ntl}[3]{\node [check] (#1) [#2]{ $\overline{#3}$}}
+\newcommand{\rt}[1]{edge [pre] (#1)}
+
+
+
+
+\begin{document}
+
+\begin{tikzpicture}[node distance=2cm,>=stealth',bend angle=45,auto]
+  
+  \tikzstyle{transition}=[circle,thick,draw=black!75,fill=black!20,minimum size=1cm]
+  \tikzstyle{etou}=[transition,circle,fill=blue!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=3,fill=red!75]
+  \tikzstyle{store}= [transition,diamond,fill=green!75]
+  \tikzstyle{move}= [transition,rectangle,fill=orange!75]
+  
+  \node [transition] (q0)  {$q0$};
+  \mv {1}{right of= q0} 
+    edge [pre] (q0);
+  \ou {2}{right of= 1} {} 
+    edge [pre] (1);
+
+    % haut%
+    
+  \et {qb}{below of = 2 } {$q_b$ :}
+    \rt  {2};
+  \tl{tb}{below of= qb}{b}
+    \rt {qb};
+  \ou {ou2}{right of= qb }{} 
+    \rt{qb};
+  \eq{eq}{below of= ou2}{}
+    \rt{ou2};
+  \mv{move2}{right of= ou2}
+    \rt{ou2}
+    edge [post, bend right] (qb);
+  
+   %bas%
+   
+  \et {qa}{above of = 2 } {$q_a$:}
+     \rt {2};
+  \tl{ta}{above of= qa}{a}
+    \rt {qa};
+  \st {store}{right of= qa }{} 
+    \rt{qa};
+  \mv{move}{right of= store}
+    \rt{store};
+   \ou{qap}{right of= move}{$q_a'$:}
+    \rt{move}
+    edge [post] (qb);
+   \et{et4}{above of= qap}{}
+    \rt{qap}
+    edge [post, bend right] (ta);
+   \et{et5}{left of= et4 }{}
+    \rt {et4}
+    edge [post] (store);
+   \peq{peq}{left of= et5}{}
+    \rt{et5};
+  
+  
+
+  
+  %\ou {above of= c} {c2} {};
+  
+\end{tikzpicture}
+
+
+
+
+\end{document}

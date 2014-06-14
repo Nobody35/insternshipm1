@@ -1,0 +1,139 @@
+\documentclass[a4paper,10pt]{article}
+
+
+\usepackage[utf8]{inputenc}
+\usepackage[version=0.96]{pgf}
+\usepackage{tikz}
+\usetikzlibrary{arrows,backgrounds,calc,trees,shapes,snakes,automata,backgrounds,petri}
+
+\newcommand{\st}[2]{\node [store] (#1) [#2]{$Store$}}
+\newcommand{\mv}[2]{\node [move] (#1) [#2]{$Move$}}
+\newcommand{\expl}[3]{\node [expl] (#1) [#2]{#3}}
+
+\newcommand{\et}[3]{\node [etou] (#1) [#2]{#3 $\wedge$}}
+\newcommand{\ou}[3]{ \node [etou] (#1)  [#2] {#3 $\vee$}}
+
+\newcommand{\eq}[3]{\node [check] (#1) [#2]{$eq_{#3}$}}
+\newcommand{\peq}[3]{\node [check] (#1) [#2]{ $\overline{eq_{#3}}$}}
+\newcommand{\tl}[3]{\node [check] (#1) [#2]{ $#3$}}
+\newcommand{\ntl}[3]{\node [check] (#1) [#2]{ $\overline{#3}$}}
+\newcommand{\rt}[1]{edge [pre] (#1)}
+
+
+
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+
+\newcommand{\convexpath}[2]{
+[   
+    create hullnodes/.code={
+        \global\edef\namelist{#1}
+        \foreach [count=\counter] \nodename in \namelist {
+            \global\edef\numberofnodes{\counter}
+            \node at (\nodename) [draw=none,name=hullnode\counter] {};
+        }
+        \node at (hullnode\numberofnodes) [name=hullnode0,draw=none] {};
+        \pgfmathtruncatemacro\lastnumber{\numberofnodes+1}
+        \node at (hullnode1) [name=hullnode\lastnumber,draw=none] {};
+    },
+    create hullnodes
+]
+($(hullnode1)!#2!-90:(hullnode0)$)
+\foreach [
+    evaluate=\currentnode as \previousnode using \currentnode-1,
+    evaluate=\currentnode as \nextnode using \currentnode+1
+    ] \currentnode in {1,...,\numberofnodes} {
+-- ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode)$)
+  let \p1 = ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode) - (hullnode\currentnode)$),
+    \n1 = {atan2(\x1,\y1)},
+    \p2 = ($(hullnode\currentnode)!#2!90:(hullnode\nextnode) - (hullnode\currentnode)$),
+    \n2 = {atan2(\x2,\y2)},
+    \n{delta} = {-Mod(\n1-\n2,360)}
+  in 
+    {arc [start angle=\n1, delta angle=\n{delta}, radius=#2]}
+}
+-- cycle
+}
+
+
+
+
+\begin{document}
+
+\begin{tikzpicture}[node distance=2cm,>=stealth',bend angle=45,auto]
+  
+  \tikzstyle{transition}=[circle,thick,draw=black!75,fill=black!23,minimum size=1cm]
+  \tikzstyle{etou}=[transition,circle,fill=blue!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=3,fill=red!75]
+  \tikzstyle{store}= [transition,diamond,fill=green!75]
+  \tikzstyle{move}= [transition,rectangle,fill=yellow!75]
+  \tikzstyle{expl}= [transition,rectangle]
+  \node [transition] (q0)  {$q0$};
+  \mv {1}{right of= q0} 
+    edge [pre] (q0);
+  \ou {2}{right of= 1} {$q_{a \vee b}:$ } 
+    edge [pre] (1);
+
+    %bas%
+     
+   \et {qb}{below of = 2 } {$q_b$ :}
+     \rt  {2};
+   \tl{tb}{below of= qb}{b}
+     \rt {qb};
+   \ou {qki}{right of= qb }{$q_{e}$ :} 
+     \rt{qb};
+   \eq{eq}{right of= qki}{}
+     \rt{qki};
+   \mv{move2}{below of= qki}
+     \rt{qki}
+     edge [post] (qb);
+   
+   
+    %haut%
+    
+   \et {qa}{above of = 2 } {$q_a$:}
+      \rt {2};
+   \tl{ta}{above of= qa}{a}
+     \rt {qa};
+   \et{qc}{right of= qa }{$q_{ck}$ :}
+     \rt{qa};
+   \mv{move}{below of= qc}
+     edge [post](2)
+     \rt{qc};
+     
+   \st{store}{right of=qc}
+    \rt{qc}
+    edge [post] (move);
+     \peq{peq}{above of= qc}{}
+     \rt{qc};
+  
+  
+  
+
+  \begin{pgfonlayer}{background}
+  %if
+  \expl{ca}{above of= ta}{case a};
+  \fill[blue,opacity=0.3] \convexpath{ca,ta,qa,qa.east,qa,2}{23pt};
+  \expl{cb}{below of= tb}{case b};
+  \fill[blue,opacity=0.5] \convexpath{2,qb,qb.east,qb,tb,cb}{23pt};
+  %create
+  \expl{cs}{right of= store}{create};
+  \fill[green,opacity=0.3] \convexpath{qc,store,qc,cs}{23pt};
+  %erase 
+  \expl{ck}{right of= eq}{erase};
+  \fill[black,opacity=0.3] \convexpath{qki,eq,ck}{23pt};
+   
+  %kill
+  \expl{cc}{above of= peq}{kill};
+  \fill[red,opacity=0.3] \convexpath{qc,peq,cc}{23pt};
+   
+  
+  \end{pgfonlayer}
+
+\end{tikzpicture}
+
+
+
+
+\end{document}

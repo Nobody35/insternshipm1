@@ -1,0 +1,494 @@
+  \documentclass[a4paper,10pt]{report}
+\usepackage[utf8]{inputenc}
+
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+
+%barrer hachurer 
+\usepackage{ulem}
+
+\newtheorem{thr}{Theorem} %[section]
+\newtheorem{lm}{Lemma}[thr]
+\newtheorem{slm}{Sublemma}[lm]
+\newtheorem{sslm}{Subsublemma}[slm]
+\newtheorem{pp}{Proposition}
+\newtheorem{df}{Definition}
+\newtheorem{rk}{Remark}
+
+\newtheorem{td}{TODO}
+
+
+\newcommand{\dmap}[5]{
+#1~:~\begin{array}{ccccc}
+#2 &\to& #3 \\
+#4  &\mapsto& #5
+\end{array}}
+\newcommand{\seg}[1]{[\![#1]\!]} 
+\newcommand{\sego}[1]{\left [\![ #1 \right [\![} 
+\newcommand{\segw}[1]{\seg{0..(\mid #1\mid -1)}} 
+\newcommand{\ts}{\seg{0 .. (n-1)}}
+\newcommand{\C}{\mathcal{C}_{A}}
+\newcommand{\I}{\mathcal{I}_{A}}
+\newcommand{\F}{\mathcal{F}_{A}}
+
+\newcommand{\U}{\mathcal{U}_{A}}
+\newcommand{\Xa}{\mathcal{X}}
+\newcommand{\X}{\mathcal{X}_{n}}
+\newcommand{\Ya}{\mathcal{Y}}
+\newcommand{\Y}{\mathcal{Y}_{n}}
+\newcommand{\pb}{$\mathcal{P}_{A}$}
+
+% Title Page
+\title{} 
+\author{}
+
+
+%
+
+\begin{document}
+\maketitle
+
+\begin{td}
+  Introduction
+\end{td}
+
+\begin{df}[A $n-$data word,$n-$nested word]
+ For $n \in \mathbb{N}$ and $\Sigma$ an alphabet we call $n-$nested word a tupple  
+ $\langle (\sigma , \sim )  \rangle$
+ such that 
+  \begin{itemize}
+   \item $\sigma \in \Sigma^* $ is a word
+   \item $(\sim_k)_{k \in \ts }$ is a sequence of equivalence relations on position of $\sigma$. 
+  \end{itemize}
+  If moreover the sequence of relation is progressively finer which means that:  
+  $$\forall k \in \ts, \forall (i,j) \in \segw{\sigma}^2, \ (i \sim_k j \Rightarrow \left ( \forall k' \leq k, i \sim_{k'} j \right )) $$ 
+   we call the word $n-$nested word.
+\end{df}
+
+
+
+\begin{df}[Nested Register Automata $(NARA_n)$]
+  A Nested Alternative Register Automata ($NARA_n$) is a tupple : 
+  $\langle (\Sigma ,Q ,q_0, \delta )  \rangle$
+  \begin{itemize}
+   \item $\Sigma$ is an alphabet,
+   \item $Q$ is a finite set of states,
+   \item $q_0$ is the initial state ,
+   \item $ \delta $ is a map from $Q $ to $\Phi $, \\ 
+   where $\Phi$ is defined by the grammar : 
+   $$ a \ | \  \overline{a} \ | \ store(q) \ | \ eq_k \ | \  \overline{eq_k} \ | \  q \wedge q' \ | \ q \vee q' \ | \ Move(q)  $$
+  where $a \in \Sigma$, $k \in  \ts$ and $(q,q') \in Q^2$.
+  \end{itemize}
+
+\end{df}
+\begin{td}
+  rk : the definition of it.
+  exemples
+\end{td}
+
+\begin{td}
+  Introduction main theorem.
+\end{td}
+
+\begin{thr}[Main]
+  \label{main}
+ The emptyness problem on $NARA$ is decidable.
+\end{thr}
+
+
+Before proving this theorem we have to define things on $NARA$ such as configurations, transitions, runs....
+
+
+In the register we will save a data defined by :  
+\begin{df}[Datas ]
+  For $n\in \mathbb N$, we will need to remember the $n$-tuple of equivalence class's of integer (who will represent an position in a word).
+  However we can say that we put don't put in the registers the class sentence but a representative in $\mathbb N$ (for example the smalest).
+  So we call data a $n$-tuple of representatives .
+  We will write $\Xa = \mathbb N$ the set of représentatives, and $\X = \Xa^n$ the set of datas.
+\end{df}
+
+\begin{rk}
+ Register just a representative allows us to not guess the length of the word when we are reading it.
+\end{rk}
+
+
+\begin{df}[Configurations of a $NARA_n$ and threads]
+For $A$ an $NARA_n$ we call configuration on $A$ a tupple  
+ $\langle  (a ,x, \Delta  )  \rangle$
+ such that 
+  \begin{itemize}
+    \item $a \in \Sigma$ is the current letter, 
+    \item $x\in  \X$ is the current data, 
+    \item $\Delta \subset Q \times \X$ that we will call threads, is a finite set of pair  
+    $\langle (q,x)  \rangle$ such that:
+      \begin{itemize}
+	\item $q \in Q$ the current state of the thread,
+	\item $x\in  \X $ the data in the register of the thread.
+      \end{itemize}
+   \end{itemize}
+ We write $\C = ( \Sigma \times \X \times \mathcal{P}_f(\X \times Q))$, the set of all configurations.
+\end{df}
+
+\begin{rk}
+  With this formalism we dont have the formula $ \phi \wedge \phi$. But we can simulate it.
+\end{rk}
+\begin{td}
+  Which kind of formula?
+\end{td}
+
+
+
+\begin{df}[$\rightarrow$, $Move(\Delta)$ and ``$\Delta$ is moving'' ]
+  Let $A = (\Sigma ,Q ,q_0, \delta )$ be a $NARA_n$
+  Let $\rho = (a,x,\Delta) \in \C$ and $\rho' \in \C$ be two configuations.
+  We will set  $\rho \rightarrow_A \rho'$  becoming with a distinction of cases according to $\Delta$ : 
+   \begin{itemize}
+    \item [${\xrightarrow{(a',x')}}_M$ (move)] If $\Delta$ is moving (means $\forall (q_1,x_1) \in \Delta, \ \exists q_2 \in Q \mid \delta(q_1) = Move(q_2)$)
+    then $\rho'  = (a',x',Move(\Delta))$ 
+    where $Move(\Delta) = \{(x_1,q_2) \mid \exists (x_1,q_1) \in \Delta \mid \phi(q_1) = Move(q_2)\}$ and $(a',x') \in (\Sigma \times \X)$.
+
+    \item [$\rightarrow_{\epsilon}$ (epsilon)  ] Else we write $\Delta = \{(q_1,x_1)\} \cup \Delta_2$ and we have  $\rho' = (a,x,S \cup \Delta_2 )$ where $S$ depends of $\delta(q_1)$:  
+    \begin{itemize}
+    \item [$\rightarrow_\vee$ (or)] If $\delta(q_1) = (q_2 \vee q_3)$  then we have two possible transitions, so two possible $S$:
+      \begin{itemize}
+	\item $S = \{ (q_2,x_1)\}$,   
+	\item $S = \{(q_3,x_1) \}$.
+      \end{itemize}
+    \item [$\rightarrow_\wedge$ (and)] If $\delta(q_1) = (q_2 \wedge q_3)$  then $S = \{(q_2,x_1); (q_3,x_1) \} $.
+    \item [$\rightarrow_s$ (store)] If $\delta(q_1) = store(q_2)$  then $S =  \{(q_2,x_1)\}$.
+ 
+    \item [$\rightarrow_c$ (check)] Else $S = \emptyset$ if and only if we are in one of those cases:  
+	\begin{itemize}
+ 	 \item $\delta(q_1) = b$ and $ a= b$,
+ 	 \item $\delta(q_1) = \overline b$ and $ a \neq b$,
+ 	 \item $\delta(q_1) = eq_j$ and $x_j = {(x_1)}_j$,
+ 	 \item $\delta(q_1) = \overline{eq_j}$ and $x_j \neq {(x_1)}_j$.
+	\end{itemize}
+	 (else this thread will be dead, see remark~\ref{dead})
+    \end{itemize}
+   
+
+    
+   \end{itemize}
+
+
+\end{df}
+
+
+\begin{rk}
+  \label{dead}
+  The possibility to have multiple threads force us to make them moving on the word simultaneously. 
+  Moreover the acceptance condition will be the lack of thread, so, when $\rightarrow_c$ doesn't work, the thread will never move.
+  We can see such a thread as a ``dead'' thread which avoid the run to be accepted.
+  That's why some transition ($X$ and $store$) have to change the current state.
+\end{rk}
+Let's define the end of basis of $NARA_n$ has we guessed:
+\begin{df}[$\I,\F$, runs, accepted]
+Let $A = (\Sigma ,Q ,q_0, \delta )$ be a $NARA_n$. We define :
+\begin{itemize}
+ \item $\I = \{(a_0,x_0,\{(q_0,x_0)\}\}$  the singleton of the initial configuration, where $(a_0,x_0) \in (\Sigma \times \X)$ was chosen arbitrarily.
+ \item $\F = (\Sigma \times \X \times \{\emptyset\})$ the set of accepting configurations.
+\end{itemize}
+A run is a finite sequence $\rho \in \C^l$ with $l \in \mathbb N$ and for all $i \in \seg{(l-2)}$, $\rho_i \rightarrow \rho_{i+1}$.
+Let $l \in \mathbb N$  an integer and $\rho \C^l$ a run.
+We set $m \in \seg{1..l)}$ the number of moving transition ($\rightarrow_M$), then we have an ordered sequence of indice $i \ in {\mathbb N}^n$ and a sequence of cupple $\alpha = (a,x) \in {(\Sigma \times X)}^m $
+such that $\forall j \in \seg{0..(m-1)}$, $\rho_{i_j} \xrightarrow(a_{i_j},x_{i_j}) \rho_{i_j+1}$.
+We set $\sigma$ the word obtained by concatenation of the $a_{i_j}$, and $\sim$ the $n$-tuple of equivalence induced by the $x_{i_j}$.
+Then we write $\rho_0 \xrightarrow{(\sigma,\sim)}$*$ \rho_{l-1}$.
+Moreover if $\rho_0 \in \I$ and $\rho_{l-1} \in \F$ we say that $(\sigma,\sim)$ is accepted.
+
+
+
+\begin{td}
+  Exemples
+\end{td}
+
+
+\end{df}
+
+To improve the readability we define:
+\begin{df}[$\Xa^k(x)$]
+  Let $A = (\Sigma ,Q ,q_0, \delta )$ be a $NARA_n$.
+  For $(k,x,\Delta) \in (\ts \times \X \times 2^{(Q\times \X)) } $ we write $\Xa^k(\Delta) = \{x \in \Xa \mid \exists (q,x') \in \Delta \mid x'_k = x_k\}$.
+\end{df}
+
+\begin{rk}
+  We can see that ${\xrightarrow{(a,x)}}_M$ is not effective cause $\X$ is infinite.
+  In fact we have a finite chose for $x$, because for all $ k \in \ts$ we can chose a $x_k$ yet in one of the thread or a ``fresh one`` or not.
+  Every ''fresh one`` that we can chose are equivalent (see $\equiv$ that we will define), then we can count it just one time.
+  So we can define a new version of ${\xrightarrow{}}_M$. 
+\end{rk}
+
+\begin{df}[New definition of $\rightarrow_M$]
+  \label{minipb}
+  Let $A = (\Sigma ,Q ,q_0, \delta )$ be a $NARA_n$.
+  For $\rho = (a,x,\Delta) \in \C$ and $\rho' = (a',x',\Delta') \in \C$.
+  We have $\rho {\xrightarrow{(a',x')}}_M \rho'$ if and only if :
+  $\Delta$ is moving, $\Delta' = Move(\Delta)$ and $\forall k \in \ts,\ x'_k \in (\Xa^k(\Delta) \cup \{max(\Xa^k(\Delta))+1\}) $  
+\end{df}
+
+\begin{rk}
+ $max(\Xa^k(\Delta))+1$ is just a way to have a ''fresh`` integer.
+ Becarefull integer wich are registed are not the position of the word, they are just some representative ''the smalest known``.  
+\end{rk}
+
+
+Now we can remark that :
+\begin{lm}
+  \label{lmtth}
+  Resolving the emptyness problem on $A$ is equivalent to answer to the problem \pb: \\
+  Does there exist $a \in$ $\I$\ and $b \in\F$ such that $ a \rightarrow^* b $. 
+\end{lm}
+\begin{proof} 
+  By definition of the acceptance of a $NARA_n$. 
+\end{proof}
+
+Then we will continue with some consideration on the transition system $(\C,\rightarrow)$ using the folowing proposition about relations and transition systems.
+For that we need those definitions about transition systems and order relations:
+
+\begin{df}[rdc,$\uparrow_\preceq$ and $ Succ^*_\rightarrow$]
+  Let ($C,\rightarrow$) be a transition system and ($C,\preceq$) an order relation.
+  We say that ($C,\rightarrow$) is refflexive downward compatible (rdc) with respect of ($C,\preceq$) when :
+ $$\forall (\rho,\rho_2,\rho_3) \in C^3  ((\rho \leq \rho_2) \wedge (\rho_2 \rightarrow \rho_3)) \Rightarrow (\exists \rho_1 \in C \mid ((\rho \rightarrow \rho_1 \vee \rho = \rho_1) \wedge \rho_1 \leq \rho_3))$$. 
+ \begin{td}
+  figure
+ \end{td}
+
+  Let $S \subset C$,
+  we set $\uparrow_\preceq S = \{c \in C \mid \exists s \in S \mid s \preceq c \}$, and $Succ^*_\rightarrow S = \{c \in C \mid \exists s \in S \mid s \rightarrow^* c \}$.
+\end{df}
+
+
+\begin{pp} 
+  \label{pp}
+  If  ($C,\rightarrow$) is a transition system effective rdc with respect of ($C,\preceq$), a wqo decidable, then for any finite set $I\subset C$ it's possible to compute a finite set $U \subseteq C$ such that
+  $\uparrow_\preceq U=\uparrow_\preceq Succ^*_\rightarrow (I)$.
+\end{pp}
+
+\begin{td}
+  (quote p2.7)
+\end{td}
+
+The following lemma show us what remains to be showned to prove the Theorem~\ref{main}.
+\begin{lm}
+    \label{mlm}
+    If for all $NARA_n$ $A$ we can define a relation $\preceq$ such that: 
+     \begin{itemize}
+	\item ($\C$,$\preceq$) is a wqo (Lemma ~\ref{cd1}),
+	\item ($\C$,$\preceq$) is decidable (Lemma ~\ref{cd2}),
+	\item ($\C$,$\rightarrow$) is effective (Lemma ~\ref{cd3}),
+	\item ($\C$,$\rightarrow$) is rdc with respect to ($\C$,$\preceq$) (Lemma ~\ref{cd4}),
+	\item $\F$ is downward closed (Lemma ~\ref{cd5}),
+	\item $\F$ is recursive (Lemma ~\ref{cd6}).
+     \end{itemize}
+      Then the emptyness problem on $NARA$ is decidable (Theorem ~\ref{main}).
+\end{lm}
+
+\begin{proof}
+  Let $A$ be an $NARA_n$,
+  $\I$\ is finite and, assuming conditions of this lemma, we can apply the Proposition~\ref{pp}.
+  Hence me can compute $\U$ finite such that $\uparrow_\preceq \U=\uparrow_\preceq Succ^*_\rightarrow (\I)$.
+  $\F$ is recursive so we can test for every element $u \in \U$ if $u \in\F$, hence we can test if $\U \cap\F=\emptyset$ . 
+  In other words the problem \pb' : Does $\U \cap \F =\emptyset$ is decidable, let us show that we can reduce \pb in \pb'.  
+  If there exists $u \in \U \cap \F$ , we have $u\in \U \subset \uparrow_\preceq  \U =\uparrow_\preceq Succ^*_\rightarrow (\I)$. 
+  Then by definition of $Succ^*_\rightarrow (\I)$, there exists $a\in$ $\I$\ and $b \in\C$ such that $a \rightarrow^* b \preceq u$.
+  Moreover $\F$ is downward closed so $b \in \F$.\\\
+  Reciprocally let's assume that there exists $a\in$ $\I$\ and $b \in\F$ such that $a \rightarrow^* b $,
+  Then $b \in  Succ^*_\rightarrow (\I) \subset \uparrow_\preceq Succ^*_\rightarrow (\I)=\uparrow_\preceq  \U$. 
+  Then there exists $v \in \U$ such that $v \preceq b$, so, as $\F$ is downward closed, $b \in \U$. Hence $\U \cap \F =\emptyset$.
+  To end with for all $A$  $NARA_n$ we can reduce \pb\ to \pb' wich is decidable so \pb\ is decidable so, according to Lemma~\ref{lmtth},  the emptyness problem on $NARA$ is decidable.
+\end{proof}
+
+Since now we will set $A =(\Sigma ,Q ,q_0, \delta )$ an $NARA_n$, moreover we will introduce some notations to improve the readability.
+
+\begin{df}[$\Ya, \Y, \phi(x),\Delta(x), \X(\Delta),\phi(x), \phi(\Delta)$ and $ \phi(\rho)$]
+We write $\Ya$ the set of bijection on $\Xa$ and $\Y = \Ya^n$ .
+Moreover for all $(x,\phi) \in (\X \times \Y)$ we define $\phi(x) = (\phi_i(x_i))_{i \in \seg{n-1}} $
+and for all $(x,k,q,\Delta,\rho,\phi) \in (\X \times \ts \times Q \times (Q \times \X) \times \C \times \Y)$, we write 
+$\Delta(x) = \{ q\in Q \mid (q,x) \in \Delta \}$,
+$\Delta^k(x) = \{q \in Q \mid \exists  (q,x') \in \Delta \mid x'_k = x_k\}$,
+$\X(\Delta) = \{ x\in X \mid \exists q\in Q \mid (q,x) \in \Delta \}$,
+$\phi(\Delta) = \{ (q,\phi(x)) \in (Q \times \X) \mid (q,x) \in \Delta \}$,
+and $\phi(\rho) = (a,\phi(x),\phi(\Delta))$ if $\rho = (a,x,\Delta)$.
+\end{df}
+
+Now we can define $\preceq$ and prove conditions of the lemma~\ref{mlm}.
+
+\begin{df}
+  Let $(\rho,\rho_2) \in$  $\C\times\C$.
+  We write $\rho \equiv \rho_2$ when there exists $\phi \in \Y$ such that  $ \rho = \phi(\rho_2)$.    
+  Moreover we write $\rho \leq \rho_2$ when $ \rho=(a ,x, \Delta  )$, $\rho_2=(a ,x, \Delta_2  )$ and $\Delta \subseteq \Delta_2$.
+  To finish we write $\rho \preceq \rho_2$ when there exists $\rho' \in \X$ such that $\rho \equiv \rho'$ and $\rho' \leq \rho_2$.
+\end{df}
+
+
+
+\begin{lm} \label{cd1}
+  ($\C$,$\preceq$) is a wqo.
+\end{lm}
+
+\begin {proof}
+Let $\rho \in \C^{\mathbb N}$ be an infinite sequence of configurations of $A$ and let us show that we could find $i < j$ such that $\rho_i \preceq \rho_j$.
+To begin with we define
+$\dmap{f}{\C}{\Sigma \times Q}{(a,x,\Delta)}{(a,\Delta(x))}$.
+As $\Sigma \times Q$ is finite, by the pigeonhole principle, we can extract from $\rho$ a sequence $\tau$ and find $(a_0,\Delta_0) \in \Sigma \times Q$ such as 
+$\forall i \in \mathbb N,\ f(\tau_i)=(a_0,\Delta_0)$.
+Now for $\Delta \subset Q \times \X $ and $k \in \ts$ we define $\dmap{g^k_\Delta}{2^Q}{2^X}{S}{\{ x \in X | S=\Delta^k(x) \}} .$
+Moreover we define $\Delta \preceq^t \Delta_2$ if and only if $\forall (S,k) \in (2^Q \times \ts) ,\ \lvert g^k_\Delta(S) \lvert \leq_{\mathbb N \cup \{\infty\}} \lvert g^k_{\Delta_2}(S) \lvert$. Let's prove that: 
+\begin{slm}
+  $\preceq^t$ is a wqo.
+\end{slm}
+\begin{proof}
+We will see $\preceq^t$ as a product, for that we set $ \dmap{h}{2^{Q\times X}}{({\mathbb N \cup \{\infty\})}^{(2^Q \times \ts)}}{\Delta}{(|g_{\Delta}(S)|)_{(S,k)\in (2^Q \times \ts)  }}.$
+Then, by construction, $\Delta \preceq^t \Delta_2$ if and only if $ h(\Delta) \leq_{{(\mathbb N \cup \{\infty\})}^{(2^Q \times \ts)}} h(\Delta_2)$.
+Moreover $Q$ is finite so $(2^Q \times \ts)$ is and, as $\leq_{\mathbb N \cup \{\infty\}}$ is a wqo, by Dickson's Lemma $\leq_{{(\mathbb N \cup \{\infty\})}^{(2^Q \times \ts)}}$
+is a wqo so $\preceq^t$ is.
+\begin{td}
+  Quote dickson's lemma( do I have to prove qo?) 
+\end{td}
+\end{proof}
+Then we can find $i < j$ such that $\tau_i=(a_0,x_i,\Delta_i), \tau_j=(a_0,x_j,\Delta_j)$ and $\Delta_i \preceq^t \Delta_j$.
+Now let's prove that :
+
+\begin{slm}
+  There exist $\tau_i' \in \C$ such that $\tau_i \equiv \tau_i'$ and that  $\tau_i' \leq \tau_j$.
+\end{slm}
+\begin{proof}
+We saw that $\forall (S,k) \in (2^Q \times \ts),\ \lvert g^k_{\Delta_i(S)} \lvert \leq_{\mathbb N \cup \{\infty\}} \lvert g^k_{\Delta_j}(S) \lvert$, 
+so for all $\forall (S,k) \in (2^Q \times \ts)$ we can define an injection $\phi^k_S: g^k_{\Delta_i}(S) \to g^k_{\Delta_j}(S)$. 
+Moreover $\Delta_i(x_i)=\Delta_j(x_j)=\Delta_0$ then we can, defining $\phi_{\Delta_0}$, set that $\phi_{\Delta_0}(x_i) = x_j$.
+Now we define, for all $k \in \ts$, a map $\dmap{\psi_k}{\Xa^k(\Delta_i)}{\psi(\Xa^k(\Delta_i))}{x}{\phi^k_{\Delta_i(x)}(x)}$, let's show that:
+\begin{sslm}
+  For all $k \in \ts$, $\psi_k$ is bijective.
+\end{sslm}
+\begin{proof}
+Let $k \in \ts$.
+Let $(x,x') \in \Xa^2 $ such as $\psi(x)= \psi(x') = y$.
+By definition of $\psi$ there is $(S,S')\in {2^Q}^2$ such that  $y = \phi_S^k(x) =\phi^k_{S'}(x')$. Moreover $y\in g_{\Delta_j}(S)$ and  $y\in g_{\Delta_j}(S')$. In other world, by definition of $g$,
+$S=\Delta_j(y)=S'$, moreover $\phi^k_S$ is injective so for all $(x,x') \in \X^2 $ we have $ x=x'$.
+Then  $\psi_k$ is injective.
+Moreover $\psi_k$ is injective and define from $\X(\Delta_i)$ to $\psi(\X(\Delta_i))$.
+Hence for all $k \in \ts$, $\psi_k$ is bijective.
+\end{proof}
+Now we set $\Delta_i'=\psi (\Delta_i)$ and $\tau_i'=\psi (\tau_i)$. 
+Moreover written $ \tau_i'=(a_0,x_i',\Delta'_i)$ we can see that by definition $ x_i'=\psi(x_i)=x_j$, hence $\tau_i \equiv \tau_i'$.
+It's remains to show that:
+\begin{sslm}
+  $\tau_i' \leq \tau_j$.
+\end{sslm}
+
+\begin{proof}
+  We have just seen that $ x_i'=\psi(x_i)=x_j$, so we just have to show that $\Delta_i' \subset \Delta_j$.
+  Let $(q,x') \in \Delta_i'$, by construction of $\Delta_i'$, there is $x \in \X(\Delta_i)$ such as $(q,x) \in \Delta_i$ and $x'=\phi_{\Delta_i(x)}(x)$.
+  Moreover, by definition $x'=\phi_{\Delta_i(x)}(x) \in g_{\Delta_j}(\Delta_i(x))$ so $ x' \in \{ t \in X | \Delta_i(x)=\Delta_j(t) \}$.
+  Then $\Delta_i(x)=\Delta_j(x')$ so in particular, as $q \in \Delta_i(x)$, $q \in \Delta_j(x')$.
+  Hence for all $(q,x') \in \Delta_i'$ we have $(q,x') \in \Delta_j$, in other word $\Delta_i' \subset \Delta_j$ and $\tau_i' \leq \tau_j$.
+\end{proof}
+Then we have $\tau_i \equiv \tau_i'$ and  $\tau_i' \leq \tau_j$.
+\end{proof}	
+Hence $\tau_i \preceq \tau_j$, then for all $\rho \in \C^{\mathbb N}$ infinite sequence of configurations we can find $i < j$ such that $\rho_i \preceq \rho_j$.
+Moreover $\preceq$ is reflexive and transitive by construction, then $\preceq$ is a wqo.
+
+\end{proof}
+\begin{lm} \label{cd2}
+  ($\C$,$\preceq$) is decidable.
+\end{lm}
+\begin{proof}
+  Sets of threads are finite so there is a finite number of bijection to test before testing an inclusion between to finite set.
+  Hence $\preceq$ is decidable.
+\end{proof}
+
+\begin{lm} \label{cd3}
+  ($\C$,$\rightarrow$) is effective.
+\end{lm}
+
+\begin{proof}
+   Sets of threads are finite, and for all case there is a finite number of transition possible (definition ~\ref{minipb}).
+   Hence ($\C$,$\rightarrow$) is effective.
+\end{proof}
+
+\begin{lm} \label{cd4}
+  ($\C$,$\rightarrow$) is rdc with respect to ($\C,\preceq$).
+\end{lm}
+
+\begin{proof}
+  We begin to look $\leq$ with proving that :
+  \begin{slm}
+  $\forall (\rho,\rho_2,\rho_3) \in C^3  ((\rho \leq \rho_2) \wedge (\rho_2 \rightarrow \rho_3)) \Rightarrow (\exists \rho_1 \in C \mid ((\rho \rightarrow \rho_1 \vee \rho = \rho_1) \wedge \rho_1 \preceq \rho_3))$.
+ 
+  \end{slm}
+   \begin{proof}
+   Let $\rho = (a,x,\Delta) \in \C$, $\rho_2 = (a_2,x_2,\Delta_2) \in \C$ and $\rho_3 = (a_3,x_3,\Delta_3) \in \C$ be tree configurations 
+   such that $\rho \leq \rho_2$ and $\rho_2 \rightarrow \rho_3$ we are looking for $\rho_1 \in _C$ such that ($\rho \rightarrow \rho_1$ or $\rho = \rho_1$) and $\rho_1 \leq \rho_3$.
+   To begin with, by definition of $\leq$ we have $a = a_2$, $x= x_2$ and $\Delta \subset \Delta_2$, then we set $S = \Delta_2 \setminus \Delta$. Let's distinct cases according to $\rightarrow$: 
+   \begin{itemize}
+    \item [if $\rho_2 \rightarrow_{\epsilon} \rho_3$,] 
+    then we write, as in the definition of $\rightarrow_{\epsilon}$,  $\Delta_2 = \{\alpha \} \cup \Delta'_2$ and $\Delta_3 = \Delta'_2 \cup S_3$.
+    Moreover, by definition of $\rightarrow_{\epsilon}$, $a_3 = a_2$ and $x_3 = x_2$.
+    Now, as $\Delta \subset \Delta_2$, we can distinct again two cases:
+      \begin{itemize}
+	\item [if $\alpha \in \Delta$,] then we write $\Delta = \{\alpha \} \cup \Delta'$.  
+	We do the same transition on $\rho$ to have $\rho \rightarrow \rho_1$, so we have $\rho_1 = (a,x,\Delta_1)$ where $\Delta_1 = \Delta' \cup S_3$. 
+	We have $\Delta' \subset \Delta_2$ so $\Delta_1 \subset \Delta_3$.
+	Moreover $a_3= a_2 = a$ and $x_3 = x_2 = x$.
+	Hence $\rho_1 \leq \rho_3$, and we saw that $\rho \rightarrow \rho_1$.
+	\item [Else ($\alpha \notin \Delta$)] we set $\rho_1 = \rho$. Then we have $a_3= a_2 = a$ and $x_3 = x_2 = x$, moreover $\alpha \notin \Delta $ so $\Delta \subset \Delta_2' \subset \Delta_3$.
+	Hence $\rho_1 \leq \rho_3$, and $\rho_1 = \rho$ 
+      \end{itemize}
+     \item [Else ($\rho_2 \xrightarrow{(a_3,x_3)}_{M} \rho_3$)] By definiton of $\rightarrow_{M}$, $\Delta_1 = Move(\Delta)$ and $\Delta_3 = Move(\Delta_2)$ so,
+     as $\Delta \subset \Delta_2$, $\Delta_1 \subset \Delta_3$ . 
+     Moreover, by definiton of $\rightarrow_{M}$, $\Delta_2$ is moving so, as $\Delta \subset \Delta_2$, $\Delta$ is moving to.
+     Then we have $x_1 \in X$ such that  such that $\rho \xrightarrow{(a_3,x_1)} \rho_1$ (where  $\rho_1 = (a_3,x_1,\Delta_1)$).
+     Moreover the (new) definition~\ref{minipb} allows us to chose $x_1$ such that there exists $\phi \in \Y$ with $\phi(x_1) = x_3$ and $\phi(\rho_1) = \rho_3$. 
+     To prove the last sentence we just have, for every term of $x_1$ and $x_3$, to distinct cases acording if they are ''fresh`` or not.
+     Hence, $\rho_1 \preceq \rho_3$, and we saw that $\rho \rightarrow \rho_1$.
+   \end{itemize}   
+  \end{proof}
+  And we look $\equiv$ :
+  \begin{slm}
+    ($\C$,$\rightarrow$) is rdc with respect to ($\C,\equiv$).
+  \end{slm}
+  \begin{proof}
+    Same as the precedent proof: we set $(\rho, \rho_2  , \rho_3) \in \C^3 $ be tree configurations 
+   such that $\rho \equiv \rho_2$ and $\rho_2 \rightarrow \rho_3$, we are looking for $\rho_1 \in _C$ such that $\rho \rightarrow \rho_1$  and $\rho_1 \equiv \rho_3$.
+   By definition of $\equiv$ we have $f$ bijection on $\X$ such that $\rho_2 = f(\rho)$.  We set $\rho_1 = f^{-1}(\rho_3)$, so we have $\rho_1 \equiv \rho_3$.
+   Moreover, doing the same transition of $\rho_2 \rightarrow \rho_3$, we have $\rho \rightarrow \rho_1$.    
+  \end{proof}
+  Then let $(\rho,\rho_2,\rho_3) \in C^3 $ such that $ \rho \preceq \rho_2 $ and $ \rho_2 \rightarrow \rho_3$.
+  By definition of $\preceq$ there is $\rho' \in \C$ such that $\rho \equiv \rho'$ and $\rho' \rightarrow rho_2$.
+  According to the first sublemma, there is $\rho'_1 \in \C$ such that $\rho'_1 \preceq \rho_3$ and ($\rho' \rightarrow \rho'_1$ or $\rho' = \rho'_1$).
+  If $\rho' = \rho'_1$ we set $\rho_1 = \rho'_1$.
+  Else, according to the second sublemma, there is $\rho_1 \in \C$ such that $\rho_1 \equiv \rho'_1$ and ($\rho \rightarrow \rho_1$ or $\rho_1 \preceq \rho_3$).
+  Hence there is $\rho_1 \in C $ such that ($\rho \rightarrow \rho_1$ or $\rho = \rho_1$) and $\rho_1 \preceq \rho_3$.
+  In other word ($\C$,$\rightarrow$) is rdc with respect to ($\C,\preceq$).
+
+ 
+   \begin{td}
+      (figure)
+   \end{td}
+\end{proof}
+
+
+\begin{lm} \label{cd5}
+  $\F$ is downward closed. 
+\end{lm}
+\begin{proof}
+  Let $\rho=(a,x,\Delta) \in \C$ a configuration such that there exists $\rho' \in \F$ with $\rho \preceq \rho'$.
+  By definition of $\preceq$ and $\F$, there exists $f$ in $\Y$ such that $f(\Delta) \subset \emptyset$.
+  Then $\Delta$ is empty, in other words $\rho \in \F$.
+  Hence $\F$ is downward closed. 
+\end{proof}
+
+\begin{lm} \label{cd6}
+  $\F$ is reccursive.
+\end{lm}
+
+\begin{proof}
+  It's just testing if $\Delta$ is empty.
+\end{proof}
+
+\end{document} 
+  
