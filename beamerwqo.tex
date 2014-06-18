@@ -1,0 +1,44 @@
+\documentclass{beamer}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+\newtheorem{df}{Definition}
+\newtheorem{thr}{Theorem} %[section]
+\newtheorem{lm}{Lemma}[thr]
+\begin{document}
+
+\begin{frame}{$\preceq$ is a well quasi order.}
+ \begin{itemize}
+  \pause
+  \item Reflexive and transitive \pause : take $\rho$ and look for $\rho_i \preceq \rho_j$ \pause
+  \item Data $\infty$, Threads $\infty$ \pause : use $g^k_{\Delta}(S)$.  \pause
+  \item Still infinite \pause : use cardinals. \pause
+  \item $\forall S, \forall k $: use Dickson's lemma. \pause
+  \item $\Delta_i$ and $\Delta_j$ \pause $\exists f $ $f(\Delta_i) \subseteq \Delta_j$ \pause
+  \item But what about $(a,x)$? \pause : project on $(a,\Delta(x))$. \pause
+  \item Found $\rho_i$ and $\rho_j$ \pause $\exists f $ $f(\rho_i) \preceq \rho_j$. \pause 
+  \item $\preceq$ is a well quasi order.
+ \end{itemize}
+
+\end{frame}
+
+\begin{frame}{Last lemmas.}
+\begin{lm} 
+  $\preceq$ is decidable.
+\end{lm}
+\pause
+\begin{lm} 
+  $\rightarrow$ is effective.
+\end{lm}
+\pause
+\begin{lm} 
+  $F$ is downward closed. 
+\end{lm}
+\pause
+\begin{lm} 
+  $F$ is reccursive.
+\end{lm}
+
+\end{frame}
+
+% 
+\end{document}

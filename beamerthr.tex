@@ -1,0 +1,49 @@
+\documentclass{beamer}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+\newtheorem{df}{Definition}
+\newtheorem{thr}{Theorem} %[section]
+\newtheorem{lm}{Lemma}[thr]
+\newtheorem{pp}{Proposition}
+
+\begin{document}
+
+
+\begin{frame}{Statement of the main theorem, and proposition used.}
+\begin{thr}[Main]
+ The emptiness problem on $NARA$ is decidable.
+\end{thr}
+  \pause
+ \begin{pp} 
+   If  $\rightarrow$ is a transition system effective rdc with respect of $\preceq$, a wqo decidable, then for any finite set $I$ it's possible to compute a finite set $U$ such that
+   $\uparrow_\preceq U=\uparrow_\preceq Succ^*_\rightarrow (I)$.
+ \end{pp}
+\pause
+How to use that propostion?:
+\begin{itemize}
+\pause
+ \item $\exists a \in I$\ and $\exists b \in F$ such that $ a \rightarrow^* b $? \pause
+ \item compute $U$. \pause
+ \item $U \cap F = \emptyset$. \pause
+ \item $F$ downward closed.
+\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}{Division theorem into several lemmas.}
+ \begin{itemize}
+ \item $\preceq$ is a wqo ,
+ 	\item $\preceq$ is decidable ,
+ 	\item $\rightarrow$ is effective ,
+	\item $\rightarrow$ is rdc with respect to $\preceq$,
+ 	\item $F$ is downward closed ,
+ 	\item $F$ is recursive .
+  \end{itemize}
+\end{frame}
+
+
+
+% 
+\end{document}

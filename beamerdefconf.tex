@@ -14,7 +14,7 @@
 {
 \tikzstyle{transition}=[circle,draw=black!75,minimum size=1cm]
   \tikzstyle{etou}=[transition,circle,fill=blue!75]
-  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=3,fill=red!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=6,fill=red!75]
   \tikzstyle{store}= [transition,diamond,fill=green!75]
   \tikzstyle{move}= [transition,rectangle,fill=yellow!75]
   \tikzstyle{expl}= [transition,rectangle]
@@ -50,6 +50,26 @@
 \end{center}
 }
 
+% highlight edge :
+
+\newcommand{\highe}[4]{\only<{#1}> {\draw[ultra thick,->, %Regular stuff
+preaction={%But before that
+draw,#2,-,% Draw yellow without any arrow head
+double=#2,
+double distance=1\pgflinewidth,
+}] (#3) to (#4);
+}
+}
+
+\newcommand{\hye}[3]{\highe{#1}{yellow}{#2}{#3}}
+
+%highlight thread
+\newcommand{\hyt}[2]{
+\only<#1> {
+\fill[yellow,opacity=0.5] \convexpath{#2.west, #2.east}{15pt};
+
+}
+}
 
 %conex hull
 \pgfdeclarelayer{background}
@@ -92,45 +112,34 @@
 
 \begin{document}
 
-\begin{frame}{titre}
+\begin{frame}{Definition of our automatas, configurations and a runs.}
 \inserttikz{
+
+\pause
 
 \node [transition,regular polygon,regular polygon sides=4] (q1)  {$q_1$};
 \etat {2} {below of=q1};
 \etat {3} {below of=q2};
 
+\node (invi2) [draw= none, left of=q1] {};
 
+\pause
 \ou {ou}{right of= q1}{}
 \rt {q1};
+
+\pause
 \etat{5}{right of= ou}
   \rt {ou};
 \etat{4}{above of= q5}
   \rt {ou};
   
-  
+\pause
 \et {et}{right of= q2}{}
 \rt {q2};
 \etat{6}{right of= et}
   \rt {et};
 \etat{7}{below of= q6}
   \rt {et};
-
-\peq{peq}{right of= q4}{k}
-\rt{q4};
-
-
-\eq{eq}{right of= q5}{k}
-\rt{q5};
-
-
-\tl{ta}{right of= q7}{a}
-\rt{q7};
-
-\ntl{tb}{right of= q3}{a}
-\rt{q3};
-
-
-
 \et {et2}{right of= q6}{}
 \rt {q6};
 \etat{9}{right of= et2}
@@ -138,13 +147,32 @@
 \etat{8}{above of= q9}
   \rt {et2};
 
+\pause  
+\peq{peq}{right of= q4}{1}
+\rt{q4};
 
+
+\eq{eq}{right of= q5}{2}
+\rt{q5};
+
+
+\tl{ta}{right of= q7}{a}
+\rt{q7};
+
+\ntl{tb}{right of= q3}{b}
+\rt{q3};
+
+
+
+
+\pause
 \st{store}{above of= q8}
   \rt {q8};
 \etat{10}{right of= store}
   \rt {store};
   
   
+\pause
 \mv{move}{right of= q10}
 \rt {q10};
 \etat{11}{below of= move}
@@ -155,12 +183,111 @@
 \etat{12}{right of= move2}
 \rt {move2};
 
-\node [draw=none, above of=q1] (invi)  {};
 
+% explaination
+\node (invi) [draw= none, left of=q3] {};
+
+\visible<13-16,25-26>
+{\expl{t3}{left of = invi}{
+  \only<13-16> {$t_3$}
+  \only<25-> {$t_4$}
+  \only<14-16> {$=(q_3$}
+  \only<25-> {$=(q_7$}
+  \only<15-> {$,y)$}
+  };
+}
+
+ \visible<13->
+ {\expl{t2}{above of = t3}{$t_2$
+  \only<14-24> {$=(q_2$}
+  \only<25-27> {$=(q_6$}
+  \only<28-31> {$=(q_9$}
+  \only<32> {$=(q_{12}$}
+ 
+  \only<15-> {$,y)$}
+  };
+ }
+ 
+ \visible<13-22,28->
+ {\expl{t1}{above of = t2}{
+  \only<13-22> {$t_1$} 
+  \only<28-> {$t_5$}
+  \only<14-18> {$=(q_1$}
+  \only<19-20>{$=(q_4$}
+  \only<21-22>{$=(q_5$}
+  \only<28-29>{$=(q_8$}
+  \only<30-31>{$=(q_{10}$}
+  \only<32->{$=(q_{11}$}
+  \only<15-27> {$,x)$}
+  \only<28-29> {$,y)$}
+  \only<30-> {$,x)$}
+  
+  };
+ }
+ 
+ \visible<9-> {\expl{rho}{above of= t1}{
+ \only<9-> {$\rho =($} 
+  \only<10-31> {$a,$}
+  \only<11-31> {$x,$}
+  \only<32-> {$b,z,$}
+ \only<12-> {$\Delta$}
+  \only<13-15> {$=\{t_1;t_2;t_3\})$ }
+  \only<16-22> {$=\{t_1;t_2\})$ }
+  \only<23-24,26-27> {$=\{t_2\})$ }
+  \only<25> {$=\{t_2;t_4\})$ }
+  \only<28-> {$=\{t_2;t_5\})$ }
+
+ };
+}
+ %first check
+ \hye{16}{q3}{tb}
+ \hyt{16}{t3}
+ 
+ %explain ou
+ \hyt{18-22}{t1}
+ \hye{18-21}{q1}{ou}
+ \hye{18-20}{ou}{q4}
+ \highe{20}{red}{q4}{peq}
+ \hye{18,21}{ou}{q5}
+ 
+ %kill eq
+ 
+ \hye{22-23}{q5}{eq}
+ 
+ %et 
+ \hyt{24-25}{t2}
+ \hye{24-25}{q2}{et}
+ \hye{25}{et}{q6}
+ \hye{25}{et}{q7}
+ \hyt{25}{t3}
+ 
+ %eq
+ \hyt{26}{t3}
+ \hye{26}{q7}{ta}
+ 
+ 
+ %et2
+ \hyt{27-28}{t2}
+ \hye{27}{q6}{et2}
+ 
+ \hyt{28-}{t1}
+ \hye{28}{et2}{q8}
+ \hye{28}{et2}{q9}
+ 
+ %store
+ \hye{29-30}{q8}{store}
+ \hye{30}{store}{q10}
+ 
+ %move
+  \hyt{31-}{t2}
+  \hye{31}{q10}{move}
+  \hye{31}{q9}{move2}
+  \hye{32}{move}{q11}
+  \hye{32}{move2}{q12}
 
 
 }
-%{$a^nb^m$}
+{Example for the definition.}
 
 \end{frame}
 

@@ -14,7 +14,7 @@
 {
 \tikzstyle{transition}=[circle,draw=black!75,minimum size=1cm]
   \tikzstyle{etou}=[transition,circle,fill=blue!75]
-  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=3,fill=red!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=6,fill=red!75]
   \tikzstyle{store}= [transition,diamond,fill=green!75]
   \tikzstyle{move}= [transition,rectangle,fill=yellow!75]
   \tikzstyle{expl}= [transition,rectangle]
@@ -91,10 +91,10 @@
 
 \begin{document}
 
-\begin{frame}{titre}
+\begin{frame}{Example with n.}
 \inserttikz{
 
-\tikzstyle{triangleinvi}= [transition,fill=white, regular polygon,regular polygon sides=3,dashed]
+\tikzstyle{triangleinvi}= [transition,fill=white, regular polygon,regular polygon sides=6,dashed]
  \node [transition,regular polygon, regular polygon sides = 4] (q0)  {$q0$};
  \mv {move}{right of= q0} 
     edge [pre] (q0);
@@ -109,14 +109,14 @@
   edge [dashed,pre] (big);
  \node (invi7) [draw=none,below of=ou] {}
   edge [dashed,pre] (big);
- \ou {ou1}{above of= invi6}{$1$ :}
+ \ou {ou1}{above of= invi6}{$0$ :}
     \rt{big}
     edge [dashed] (ou);
  \node (invi4) [triangleinvi,below right of=ou1] {}
     edge [pre,dashed] (ou1);
  \node (invi5) [triangleinvi,right of=ou1] {}
   edge [pre,dashed] (ou1);
- \ou {oun}{below of= invi7}{$n$ :}
+ \ou {oun}{below of= invi7}{$n-1$ :}
     \rt{big}
     edge [dashed] (ou);
  \node (invi2) [triangleinvi,right of=oun] {}
@@ -125,9 +125,9 @@
   edge [pre,dashed] (oun);
  
  \node (invi) [draw=none,right of=ou] {};
- \eq {eq}{above right of=invi}{k+1}
+ \eq {eq}{above right of=invi}{k}
     \rt{ou};
- \peq {peq}{below right of=invi}{k}
+ \peq {peq}{below right of=invi}{k+1}
     \rt{ou};
  
  
@@ -143,7 +143,7 @@
   \pause
   %delete
   \expl{dl1}{right of=eq}{delete};
-  \fill[black,opacity=0.3] \convexpath{ou,eq,eq.north,eq,dl1}{23pt};
+  \fill[black,opacity=0.3] \convexpath{ou,eq,dl1}{23pt};
   
   \pause
   %delete
@@ -153,7 +153,7 @@
   \pause
   %for 
   \node (invi2) [draw=none,left of=ou1] {};
-   \expl{for}{left of=invi2} {for $k$ from $1$ to $n$};
+   \expl{for}{left of=invi2} {for $k$ from $0$ to $n-1$};
   \fill[blue,opacity=0.3] \convexpath{for.west,for,ou1,big,ou1,ou,oun,big,ou,ou1}{23pt};
   
   
