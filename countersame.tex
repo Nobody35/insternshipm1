@@ -1,0 +1,27 @@
+
+
+\newcommand{\mon}[2]{\node [move] (#1) [#2]{On $\Sigma_1$}}
+\newcommand{\egal}[2]{\node [check] (#1) [#2]{$\sim$}}
+
+
+
+\node [draw = none] (sfirst) {};
+\mon {smon}{right of = sfirst}
+\rt {sfirst};
+
+\et {set}{right of = smon} {}
+\rt {smon};
+
+\egal {seg}{above right of = set }
+\rt {set};
+
+
+\tl {sl}{above left of = set }{a}
+\rt {set};
+
+
+
+
+\node [draw = none, right of = set] (nlast) {}
+\rt{set};
+

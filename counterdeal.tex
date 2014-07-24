@@ -1,0 +1,32 @@
+\newcommand{\mon}[2]{\node [move] (#1) [#2]{On $\Sigma_1$}}
+\newcommand{\egal}[2]{\node [check] (#1) [#2]{$\sim$}}
+
+
+
+
+\node [draw = none] (dfirst) {};
+\st {dst}{right of = dfirst}
+\rt {dfirst};
+
+\ou {dou}{right of = dst}{$\Sigma_1$: }
+\rt{dst};
+
+
+\et {det}{right of = dou}{$a$: }
+\rt{dou};
+
+\tl {dta}{above right of = det}{$a$}
+\rt{det};
+
+
+\node (dqak) [draw= none, right of = det ]{}
+edge [pre] node[above] {(a)} (det) ;
+
+
+
+\node (dqak1) [transition,below right of = dou, dashed ]{b}
+\rt{dou};
+
+
+\node (dqakn) [transition,above right of = dou, dashed ]{c}
+\rt{dou};

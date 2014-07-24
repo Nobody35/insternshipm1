@@ -1,0 +1,308 @@
+  \documentclass[a4paper,10pt]{report}
+\usepackage[utf8]{inputenc}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+
+%barrer hachurer 
+\usepackage{ulem}
+
+
+\newtheorem{thr}{Theorem} %[section]
+\newtheorem{lm}{Lemma}[thr]
+\newtheorem{slm}{Sub-lemma}[lm]
+\newtheorem{sslm}{Sub-sub-lemma}[slm]
+\newtheorem{pp}{Proposition}
+\newtheorem{df}{Definition}
+\newtheorem{rk}{Remark}
+
+\newtheorem{td}{TODO}
+
+\newcommand{\Pbb}{$\mathcal{P}$}
+
+\newcommand{\Lu}{$\mathcal{L}_{1}$}
+\newcommand{\Ld}{$\mathcal{L}_{2}$}
+\newcommand{\Lt}{$\mathcal{L}_{3}$}
+%tikz
+
+\newcommand{\insertfigure}[3] {
+
+\begin{minipage}[b]{#2\linewidth}
+    \includegraphics[width=#2\linewidth]{#1} 
+    \caption{#3} 
+\end{minipage} }
+
+\newcommand{\insertf}[2]{\insertfigure{#1}{2.0}{#2}}
+
+
+%insertpicture in beamer
+\newcommand{\insertpicture}[2]{
+\begin{center}
+  \begin{figure}
+    \insertf{#1}{#2}
+ \end{figure}
+\end{center}
+}
+
+
+%tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,backgrounds,calc,trees,shapes,snakes,automata,backgrounds,petri,matrix}
+
+
+\newcommand{\cmdtikz}
+{
+\tikzstyle{transition}=[circle,draw=black!75,minimum size=1cm]
+  \tikzstyle{etou}=[transition,circle,fill=blue!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=6,fill=red!75]
+  \tikzstyle{store}= [transition,diamond,fill=green!75]
+  \tikzstyle{move}= [transition,rectangle,fill=yellow!75]
+  \tikzstyle{expl}= [transition,rectangle]
+ }
+\newcommand{\st}[2]{\node [store] (#1) [#2]{$Store$}}
+\newcommand{\mv}[2]{\node [move] (#1) [#2]{$Move$}}
+\newcommand{\expl}[3]{\node [expl] (#1) [#2]{#3}}
+
+\newcommand{\et}[3]{\node [etou] (#1) [#2]{#3 $\wedge$}}
+\newcommand{\ou}[3]{ \node [etou] (#1)  [#2] {#3 $\vee$}}
+
+\newcommand{\eq}[3]{\node [check] (#1) [#2]{$eq_{#3}$}}
+\newcommand{\peq}[3]{\node [check] (#1) [#2]{ $\overline{eq_{#3}}$}}
+\newcommand{\tl}[3]{\node [check] (#1) [#2]{ $#3$}}
+\newcommand{\ntl}[3]{\node [check] (#1) [#2]{ $\overline{#3}$}}
+\newcommand{\rt}[1]{edge [pre] (#1)}
+\newcommand{\etat}[2]{\node [transition,regular polygon,regular polygon sides=4] (q#1) [#2]  {$q_{#1}$}}
+
+%insert tikz in report
+\newcommand{\inserttikz}[2]{
+\begin{center}
+  \begin{figure}[]
+    \begin{tikzpicture}[node distance=2.5cm,>=stealth',bend angle=45,auto]
+    \cmdtikz
+    #1
+\end{tikzpicture}
+
+
+
+\caption{#2}
+\end{figure}
+\end{center}
+}
+\newcommand{\inserttikzh}[2]{
+\begin{center}
+  \begin{figure}[!h]
+    \begin{tikzpicture}[node distance=2.5cm,>=stealth',bend angle=45,auto]
+    \cmdtikz
+    #1
+\end{tikzpicture}
+
+
+
+\caption{#2}
+\end{figure}
+\end{center}
+}
+
+
+
+%todo check segment
+\newcommand{\sm}{\{1..m\}}
+\newcommand{\stt}{\{1..t\}}
+\newcommand{\sbe}{\{b..e\}}
+\newcommand{\ses}{\{0..s\}}
+\newcommand{\sesp}{\{s+1..s'+s+1\}}
+\newcommand{\cupdot}{\mathbin{\mathaccent\cdot\cup}}
+
+\begin{document}
+  We will now show that  this problem is undecidable:
+  \begin{thr}
+    The emptiness problem for \textit{NARA} on $n$-data is undecidable.
+  \end{thr}
+  \begin{rk}[Intuition of the proof.]
+  The main idea of the proof is to reduce a statement of PCP. 
+  Then we set an input of PCP and we show that there is a solution if and only if a certain language \Lu\ is empty.
+  Hence, to show that our problem is undecidable, it remains to show that we can recognize \Lu.
+  We will see that we are able to recognize \Lu\ cause we are able to recognize an other language \Lt\ near from the language of square words ($ww$).
+  Indeed when we have shown that \Lt\ is recognizable we have made the harder cause we have a regular language \Ld\ such that  \Lu\ $=$ \Ld\ $\cap$ \Lt($\Gamma,\sm$) $\cap$ \Lt($\sm
+  ,\Gamma$). 
+  By the way, to recognize \Lt\ we will try to represent a counter with $\sim_0$ and $\sim_1$ (see figure).   
+  \end{rk}
+  Formaly we now assume, by absurde,  that it is decidable, and we will show then PCP is. 
+  Let us define PCP.
+  \begin{df}[PCP] PCP can be defined like that :
+    \begin{itemize}
+     \item[Input:] $\Gamma$ be a finite alphabet $m \in \mathbb N$ be an integer and $u,v \in {(\Gamma^*)}^m$ be two tupples of pieces.
+     \item[Question:] Does there exist $q \in \mathbb N$ and $h \in {\sm} ^ q$ such that $u_{h_1} \ldots u_{h_q}  = v_{h_1}\ldots v_{h_q}$.
+    \end{itemize}
+  \end{df}
+    Then, now, we set  $\Gamma$ be a finite alphabet $m \in \mathbb N$ be an integer and  $u,v \in {(\Gamma^*)}^m$ be two tupples of piece.
+    And we will try to resolve this PCP statement.
+    To improve the readability we will write $P = \sm$. 
+  \begin{df}[\Lu] 
+    We define the language \Lu $= \{w\#w'\# \in (P \cupdot \Gamma \cupdot \{\# \})^*  \mid \\\    
+     q \in \mathbb N
+    \mid h \in P ^ q
+    \wedge w = h_1u_{h_1}\ldots h_qu_{h_q}  
+    \wedge w' = h_1v_{h_1}\ldots h_qv_{h_q}
+    \wedge u_{h_1}\ldots u_{h_q}  = v_{h_1}\ldots v_{h_q}
+    \}$
+  \end{df}
+  We can first notice that :
+  \begin{lm}
+      If we can recognize \Lu\ then we can solve our PCP statement. 
+  \end{lm}
+  \begin{proof}
+   If we can recognize \Lu, as we assumed can decide if \Lu\ is empty.
+   By construction \Lu is empty if and only if we have $q \in \mathbb N$ and  $h \in P ^ q$ such that $ u_{h_1}\ldots u_{h_q}  = v_{h_1}\ldots v_{h_q}$.
+   Hence \Lu is empty if and only if our PCP statement have a solution.
+  \end{proof}
+  Then we have to show that we can recognize \Lu.
+  The following lemma help us to decompose it :
+  \begin{lm}
+    We can recognize the intersection of two recognized language.
+  \end{lm}
+  \begin{proof}
+   We just have to take the two automatons with the union of the initials states.
+  \end{proof}
+  \begin{rk}
+   The number of equivalence relations of the new automaton is the sum of the two previous ones.
+  \end{rk}
+  Then we will decompose \Lu\ with the two following languages: 
+  \begin{df}[\Ld]
+    We define the language \Ld $= \left(\bigcup\limits_{i\in \sm} iu_i\right)^* \# \left(\bigcup\limits_{i\in \sm} iv_i\right)^* \# $
+  \end{df}
+  \begin{df}[\Lt($\Sigma_1,\Sigma_2$)]
+    Let $\Sigma_1,\Sigma_2$ be two alphabets, 
+    We define the language \Lt($\Sigma_1,\Sigma_2$) $= \{w\#w'\# \in (\Sigma_1 \cupdot \Sigma_2)^* \mid \Pi_{\Sigma_1}(w) = \Pi_{\Sigma_1}(w')\}$.
+    Where $\Pi_{\Sigma_1}(z)$ is the projection on $\Sigma_1$ of a word $z$  (ignoring letters of $\Sigma_2$).
+  \end{df}
+  By construction we have :
+  \begin{lm}
+    \Lu\ $=$ \Ld\ $\cap$ \Lt($\Gamma,P$) $\cap$ \Lt($P,\Gamma$).
+  \end{lm}
+  Let us begin to prove that:  
+   \begin{lm}
+     We can recognize \Ld.
+   \end{lm}
+   \begin{proof}
+     We will use the two following sublemmas:
+  \begin{slm}
+    \Ld\ is a regular language.
+  \end{slm}
+  \begin{proof}
+    By definition.
+  \end{proof}
+  \begin{slm}
+    We can recognize a regular language
+  \end{slm}
+  \begin{proof}
+   We take the finite state automata and replace transition by (figure),initial state by (figure) and final states by (figure).
+   Moreover the initials state of our $NARA$ is the singleton $\{a_0,x_0,(q_0,x_0)\}$ where $q_0$ is the initial state of the finite automata and $(a_0,x_0)$ as been arbitrarily chosen.
+   We can check that the language recognized by the $NARA$ is the initial one.   
+  \end{proof}
+  Then we can recognize \Ld.
+  \end{proof}
+  Now we set $\Sigma_1,\Sigma_2$ two finite alphabets and we just have to build an $NARA$ recognizing \Lt$(\Sigma_1,\Sigma_2)$.
+  Let us begin to build a skeleton of an automaton :
+    \inserttikzh{
+  \input{countertikz2.tex}
+  }{Skeleton}
+  Arrows with ($k$) or ($a$) represent multiple arrows with a boolean $k$ ($0$ or $1$) or a letter $a$ in $\Sigma_1$.
+  Now let us build blocs.
+  \newpage
+  \inserttikz{
+  \input{countermon.tex}
+  }
+  {On $\Sigma_1$, move until the first letter in $\Sigma_1$.}
+  \inserttikz{
+  \input{counterduplicate.tex}
+  }{Duplicate($k$), open a thread for every letter before the first $\#$.}
+  \inserttikz{
+  \input{counterdeal.tex}
+  }{Deal, send the thread at the good branch (according to the current letter). }
+  \inserttikz{
+  \input{countersucc.tex}
+  }
+  {Successor($k$), check that the data registered is $\sim_k$  but not $\sim_{1-k}$ to the current one.}  
+  \inserttikz{
+  \input{counternever.tex}
+  }
+  {Never, check that the data registered is not $\sim_0$ and not $\sim_1$ to all data until the $\#$.}
+  \inserttikz{
+  \input{counterfound.tex}
+  }
+  {Found($k$), find the first data $\sim_{1-k}$ to the registered one.}
+  \inserttikz{
+  \input{countersame.tex}
+  }
+  {Same($a$), check the data is equivalent to the current one and the current letter is $a$ as expected.}    
+  Now let us prove that:
+  \begin{lm}
+    Our automata recognize \Lt$(\Sigma_1,\Sigma_2)$.
+  \end{lm}
+  \begin{rk}
+  Intuitively to recognize $w\#w'\#$ with $ \Pi_{\Sigma_1}(w) =\Pi_{\Sigma_1}(w')$, we will open, for all letter of $\Sigma_1$ in $w$, a thread which check that: 
+  \begin{itemize}
+   \item this data won't appear again in $w$, 
+   \item this data appears exactly one time in $w'$,
+   \item when it appears, it is on the same letter of $\Sigma_1$.
+  \end{itemize}
+  \end{rk}
+
+  \begin{proof}
+    Let $z$ be a word recognized by this automaton, $t= |z|$ be the length of $z$.
+    For $i \in \stt$ we will write $x(i)$ (respectively $l(i)$) the data (respectively the letter) of the $i^{th}$ letter of $z$ which is in $\Sigma_1 \cupdot \{ \# \}$.  
+    We begin to study block by block.
+    We will write: $i_b$ the position at the beginning of the block,$i_e$ the position at the end of the block and $x_r$ the data registered at the beginning of the block. 
+    Then we can check that we have for $a \in \Sigma_1$ and $k \in \{0,1\}$ :
+    \begin{itemize}
+      \item [Successor($k$)] 
+      $x_r \sim_{k} x(i_b+1)$, \\\
+      $x_r \not \sim_{(1-k)} x(i_b+1)$.
+      \item [Never] 
+      $l(i_e) = \#$ \\\
+      $\forall i \in \sbe$,  $x_r \not \sim_{0} x_i$, \\\
+      $\forall i \in \sbe$,  $x_r \not \sim_{1} x_i$.
+      \item[Found($k$)] 
+      $x_r \sim_{(1-k)} x(i_e)$ \\\
+      $\forall i \in \sbe - e$,  $x_r \not \sim_{0} x_i$, \\\
+     $\forall i \in \sbe - e $,  $x_r \not \sim_{1} x_i$.
+     \item[Same($a$)] 
+     $x_r \sim_{0} x(i_b+ 1)$, \\\
+     $x_r \sim_{1} x(i_b+ 1)$, \\\
+     $l(i_e) = a$.
+    \end{itemize}
+    Moreover we can check that $z=w\#w'\#$ with no occurrence of $\#$ in $w$ and $w'$.
+    Then we will write $s=|\Pi_{\Sigma_1}(w)|$, $s'= |\Pi_{\Sigma_1}(w')|$, $S = \ses$ and $S' = \sesp$ .
+    With those formulas we can deduce that for all $i \in S$ (respectively $S'$) , for all $j \in S $ (respectively $S'$) 
+    if $|i-j| > 1 $ and $k = i\ mod\  2$ we have:
+    \begin{itemize}
+      \item if $i < s $ (respectively $ < s'$) then $x(i) \sim_k x(i +1)$,
+      \item if $i < s $ (respectively $ < s'$) then $x(i) \not \sim_{(1-k)} x(i +1)$,
+      \item $x(i) \not \sim_{0} x(j)$ and
+      \item $x(i) \not \sim_{1} x(j)$.
+    \end{itemize}
+    Moreover we can deduce that : for all $i \in S$ if $i > 0$ and $k = i\ mod\  2$ there exist $i' \in S'$ such that:
+    \begin{itemize}
+      \item for all $j' \in S'$ such that $j'< i' - 1$, $x(i) \not \sim_0 x(j')$ and $x(i) \not \sim_1 x(j')$,
+      \item $x(i) \not \sim_k x(i' -1)$ and $x(i) \sim_{(1-k)} x(i' -1)$,
+      \item $x(i) \sim_0 x(i')$, $x(i) \sim_1 x(i')$ and $l(i) = l(i')$
+      \item and for all $j' \in S'$ such that $j'> i' + 1$, $x(i) \not \sim_0 x(j')$ and $x(i) \not \sim_1 x(j')$.
+    \end{itemize}
+    Hence for all $i \in S$ if $i > 0$ and $k = i\ mod\  2$ there exist an unique $i' \in S'$ such that $x(i) \sim_0 x(i')$, $x(i) \sim_1 x(i')$ and $l(i) = l(i')$.
+    So, as $x(0) \sim_0 x(s+1)$ and  $x(0) \sim_1 x(s+1)$, by recurrence, we can prove $i' = i + s +1$ (with the previous notations).
+    Then $s= s'$ and $\Pi_{\Sigma_1}(w) = \Pi_{\Sigma_1}(w')$.
+    Hence $z \in$ \Lt$(\Sigma_1,\Sigma_2)$. \\\
+    Reciprocally if we take $z \in$ \Lt$(\Sigma_1,\Sigma_2)$, we have $z = w\#w'\#$, with the same notation we can set data as for all $i \in \ses$:
+    $x(i) \sim_0 i / 2 \sim_0 x(i+s+1)$ and $x(i) \sim_1 i/2 + (i\ mod \ 2) \sim_1 x(i+s+1)$. We can easily check that, with those data, $z$ is recognized by our automaton. 
+    Hence, our automata recognize \Lt$(\Sigma_1,\Sigma_2)$. 
+  
+  \end{proof}
+  Then if we assume that our problem is decidable, we can solve all PCP statements.
+  Hence the emptiness problem for \textit{NARA} on $n$-data is undecidable.
+  
+\end{document}
+
+

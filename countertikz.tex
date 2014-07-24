@@ -1,0 +1,184 @@
+\documentclass{article}
+\usepackage{default}
+\usepackage[utf8]{inputenc}
+\usepackage[version=0.96]{pgf}
+
+
+%tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,backgrounds,calc,trees,shapes,snakes,automata,backgrounds,petri}
+
+
+\newcommand{\cmdtikz}
+{
+\tikzstyle{transition}=[circle,draw=black!75,minimum size=1cm]
+  \tikzstyle{etou}=[transition,circle,fill=blue!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=6,fill=red!75]
+  \tikzstyle{store}= [transition,diamond,fill=green!75]
+  \tikzstyle{move}= [transition,rectangle,fill=yellow!75]
+  \tikzstyle{expl}= [transition,rectangle]
+ }
+\newcommand{\st}[2]{\node [store] (#1) [#2]{$Store$}}
+\newcommand{\mv}[2]{\node [move] (#1) [#2]{$Move$}}
+\newcommand{\expl}[3]{\node [expl] (#1) [#2]{#3}}
+
+\newcommand{\et}[3]{\node [etou] (#1) [#2]{#3 $\wedge$}}
+\newcommand{\ou}[3]{ \node [etou] (#1)  [#2] {#3 $\vee$}}
+
+
+\newcommand{\eq}[3]{\node [check] (#1) [#2]{$eq_{#3}$}}
+\newcommand{\peq}[3]{\node [check] (#1) [#2]{ $\overline{eq_{#3}}$}}
+\newcommand{\tl}[3]{\node [check] (#1) [#2]{ $#3$}}
+\newcommand{\ntl}[3]{\node [check] (#1) [#2]{ $\overline{#3}$}}
+\newcommand{\rt}[1]{edge [pre] (#1)}
+
+
+
+%conex hull
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+
+\newcommand{\convexpath}[2]{
+[   
+    create hullnodes/.code={
+        \global\edef\namelist{#1}
+        \foreach [count=\counter] \nodename in \namelist {
+            \global\edef\numberofnodes{\counter}
+            \node at (\nodename) [draw=none,name=hullnode\counter] {};
+        }
+        \node at (hullnode\numberofnodes) [name=hullnode0,draw=none] {};
+        \pgfmathtruncatemacro\lastnumber{\numberofnodes+1}
+        \node at (hullnode1) [name=hullnode\lastnumber,draw=none] {};
+    },
+    create hullnodes
+]
+($(hullnode1)!#2!-90:(hullnode0)$)
+\foreach [
+    evaluate=\currentnode as \previousnode using \currentnode-1,
+    evaluate=\currentnode as \nextnode using \currentnode+1
+    ] \currentnode in {1,...,\numberofnodes} {
+-- ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode)$)
+  let \p1 = ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode) - (hullnode\currentnode)$),
+    \n1 = {atan2(\x1,\y1)},
+    \p2 = ($(hullnode\currentnode)!#2!90:(hullnode\nextnode) - (hullnode\currentnode)$),
+    \n2 = {atan2(\x2,\y2)},
+    \n{delta} = {-Mod(\n1-\n2,360)}
+  in 
+    {arc [start angle=\n1, delta angle=\n{delta}, radius=#2]}
+}
+-- cycle
+}
+
+
+\newcommand{\mon}[2]{\node [move] (#1) [#2]{$On \Sigma_1$}}
+\newcommand{\egal}[2]{\node [check] (#1) [#2]{$\sim$}}
+\newcommand{\fake}[2]{\node [dashed, transition , rectangle ] (#1) [#2]{}}
+
+
+
+\begin{document}
+\begin{center}
+
+\begin{tikzpicture}[node distance=2cm,>=stealth',bend angle=45,auto]
+    \cmdtikz
+\node [etou] (first) {$\wedge$};
+\expl {oe1} {below right  of = first}{odd or even }
+\rt {first};
+\mon{fmon}{left of = first }
+edge [post] (first);
+
+\node (begin) [draw = none, above of = fmon] {}
+edge [post] (fmon);
+
+
+
+\mon {oem} {right of = oe1 }
+\rt {oe1};
+
+\expl {oe2} {right of = oem}{odd or even }
+\rt {oem};
+\tl {l2} {right of = oe2} {\lambda_2}
+\rt{oe2};
+\expl{count}{below left of = oe1}{counter}
+\rt{first};
+\st {cstore}{right of = count}
+\rt {count};
+\expl{count2}{right of = cstore}{counter}
+\rt{cstore};
+\egal{ceg}{right of = count2}
+\rt {count2};
+
+
+\expl {rmb} {above of = first}{duplicate($$)}
+\rt {first};
+
+
+\expl {qak} {right  of = rmb}{$q(a,k)$}
+\rt {rmb};
+
+\fake {qak1} {above right  of = rmb}
+\rt {rmb};
+
+
+\fake {qakn} {above  of = rmb}
+\rt {rmb};
+
+
+\expl {suc1} {above right  of = qak}{succesor($k$)}
+\rt {qak};
+
+
+\expl {nv1} {below right  of = suc1}{never($\lambda_1$)}
+\rt {suc1};
+\et {et} {right of =nv1} {}
+\rt {nv1};
+
+
+
+\expl {fnd} {above right  of = et}{found$(k)$}
+\rt {et};
+
+
+\expl{eg2} {below right of = fnd} {same($a$)}
+\rt {fnd};
+
+\expl {suc1} {below  of = eg2}{succesor($k$)}
+\rt {eg2};
+
+
+\expl {nv2} {right of = l2}{never($\lambda_2$)}
+\rt {suc1}
+edge [post] (l2);
+
+
+
+\expl {sb} {below  of = et}{check consistency}
+\rt {et}
+edge [post] (l2);
+
+
+
+\expl{t0}{right of= first}{test0}
+\rt {first};
+
+\et{et2}{right of= t0}{}
+\rt {t0}
+edge [post] (sb)
+edge [ post] (eg2);
+
+;
+
+
+
+
+
+
+\end{tikzpicture}
+
+ 
+\end{center}
+
+
+\end{document}
+

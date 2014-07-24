@@ -1,0 +1,35 @@
+
+\newcommand{\mon}[2]{\node [move] (#1) [#2]{On $\Sigma_1$}}
+\newcommand{\egal}[2]{\node [check] (#1) [#2]{$\sim$}}
+
+
+
+\node [draw = none] (nfirst) {};
+\mon {nmon}{right of = nfirst}
+\rt {nfirst};
+\ou {nou}{right of = nmon}{}
+\rt {nmon};
+
+
+\tl {nl}{right of =nou}{\#}
+\rt {nou};
+
+\et {net}{above of=nou}{}
+\rt {nou}
+;
+
+\ntl {nntl}{ right of =net }{\#}
+\rt {net};	
+
+\expl {ddup}{left of = net}{Duplicate($1-k$)}
+\rt {net}
+edge [post,bend right,dashed] (nmon)
+;
+
+
+\expl {ddl}{draw=none,below right of = net}{}
+edge [pre] node[above] {(k)} (net) ;
+
+
+
+

@@ -1,0 +1,90 @@
+
+\documentclass{article}
+
+\usepackage[francais]{babel} %
+\usepackage[T1]{fontenc} %
+\usepackage[latin1]{inputenc} %
+\usepackage{a4wide} %
+\usepackage{palatino} %
+
+
+\newtheorem{td}{TODO}
+
+\let\bfseriesbis=\bfseries \def\bfseries{\sffamily\bfseriesbis}
+
+
+\newenvironment{point}[1]%
+{\subsection*{#1}}%
+{}
+
+\setlength{\parskip}{0.3\baselineskip}
+
+\begin{document}
+
+\title{Le titre de votre rapport \\
+Pas plus du recto-verso pour cette fiche}
+
+\author{Votre nom, celui de votre encadrant, le nom de son
+  équipe/labo}
+
+\date{La date}
+
+\maketitle
+
+\pagestyle{empty} %
+\thispagestyle{empty}
+
+%% Attention: pas plus d'un recto-verso!
+
+
+\begin{point}{Le contexte général}
+  Usually, studying automatas and formal languages, we work with on a finite alphabet $\Sigma$.
+  But words over infinite alphabets are useful models in a variety of contexts in verification and databases.
+  That's why we can wonder what happens when we add to the alphabet $\Sigma$ an infinite set $D$.
+  An element of $D$ will be called data, and words on $\Sigma \times D$ will be called data words..
+  Precisely I will study automatas which are able to register a data and compare it to the current one.
+  The emptiness decidability have been proved for those automatas on those three articles: 
+    \begin{td}
+     quotes 3 articles
+    \end{td}
+\end{point}
+
+\begin{point}{Le problème étudié}
+  In my internship I try to extend that result to $n-$data words (words on $\Sigma \times D ^n$). 
+\end{point}
+
+\begin{point}{La contribution proposée}
+  I chose to transpose the second proof to my problem. 
+  \begin{td}
+   quote
+  \end{td}
+
+ 
+\end{point}
+
+\begin{point}{Les arguments en faveur de sa validité}
+  I add to introduce the concept of $n-$nested words to restrict $n-$data words.
+  Then I prove two main theorems : 
+  \begin{itemize}
+   \item The emptiness problem is decidable if we treat $n$-nested words. 
+   \item The emptiness problem is undecidable if we treat $n$-data words. 
+  \end{itemize}
+
+  
+\end{point}
+
+
+\begin{point}{Le bilan et les perspectives}
+  We can note that if we are restricted to $n$-nested words we can find an automata which recognize the language $\{ a^nb^m \ \mid \ n \leq m \}$.
+  Compared to that if we can treat every $n$-data words we are able to recognize languages similar to $\{ a^nb^n \}$ or palindromes languages.
+  It could be interesting to wonder if there exists an other restriction which allows a better expressiveness without sacrificing the emptiness decidability. 
+  To be more general it would be interesting for me to study relations between expressiveness and decidability.
+  
+\end{point}
+
+
+\end{document}
+
+
+
+

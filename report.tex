@@ -1,0 +1,338 @@
+  \documentclass[a4paper,10pt]{report}
+\usepackage[utf8]{inputenc}
+
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+
+
+%barrer hachurer 
+\usepackage{ulem}
+
+\newtheorem{thr}{Theorem} %[section]
+\newtheorem{lm}{Lemma}[thr]
+\newtheorem{slm}{Sub-lemma}[lm]
+\newtheorem{sslm}{Sub-sub-lemma}[slm]
+\newtheorem{pp}{Proposition}
+\newtheorem{df}{Definition}
+\newtheorem{rk}{Remark}
+
+\newtheorem{td}{TODO}
+
+\newcommand{\seg}[1]{[\![#1]\!]} 
+\newcommand{\sego}[1]{\left [\![ #1 \right [\![} 
+\newcommand{\segw}[1]{\seg{0..(\mid #1\mid -1)}} 
+\newcommand{\ts}{\seg{0 .. (n-1)}}
+\newcommand{\C}{\mathcal{C}_{A}}
+\newcommand{\I}{\mathcal{I}_{A}}
+\newcommand{\F}{\mathcal{F}_{A}}
+
+\newcommand{\U}{\mathcal{U}_{A}}
+\newcommand{\Xa}{\mathcal{X}}
+\newcommand{\X}{\mathcal{X}_{n}}
+\newcommand{\Ya}{\mathcal{Y}}
+\newcommand{\Y}{\mathcal{Y}_{n}}
+\newcommand{\pb}{$\mathcal{P}_{A}$}
+
+
+\newcommand{\Lu}{$\mathcal{L}_{1}$}
+\newcommand{\Ld}{$\mathcal{L}_{2}$}
+\newcommand{\Lt}{$\mathcal{L}_{3}$}
+\newcommand{\sm}{segm}
+\newcommand{\sbe}{segbe}
+\newcommand{\ses}{segs}
+\newcommand{\sesp}{segs'}
+\newcommand{\cupdot}{\mathbin{\mathaccent\cdot\cup}}
+
+%tikz
+
+\newcommand{\insertfigure}[3] {
+
+\begin{minipage}[b]{#2\linewidth}
+    \includegraphics[width=#2\linewidth]{#1} 
+    \caption{#3} 
+\end{minipage} }
+
+\newcommand{\insertf}[2]{\insertfigure{#1}{2.0}{#2}}
+
+
+%insertpicture in beamer
+\newcommand{\insertpicture}[2]{
+\begin{center}
+  \begin{figure}
+    \insertf{#1}{#2}
+ \end{figure}
+\end{center}
+}
+
+
+%tikz
+\usepackage{tikz}
+\usetikzlibrary{arrows,backgrounds,calc,trees,shapes,snakes,automata,backgrounds,petri,matrix}
+
+
+\newcommand{\cmdtikz}
+{
+\tikzstyle{transition}=[circle,draw=black!75,minimum size=1cm]
+  \tikzstyle{etou}=[transition,circle,fill=blue!75]
+  \tikzstyle{check}= [transition,regular polygon,regular polygon sides=6,fill=red!75]
+  \tikzstyle{store}= [transition,diamond,fill=green!75]
+  \tikzstyle{move}= [transition,rectangle,fill=yellow!75]
+  \tikzstyle{expl}= [transition,rectangle]
+ }
+\newcommand{\st}[2]{\node [store] (#1) [#2]{$Store$}}
+\newcommand{\mv}[2]{\node [move] (#1) [#2]{$Move$}}
+\newcommand{\expl}[3]{\node [expl] (#1) [#2]{#3}}
+
+\newcommand{\et}[3]{\node [etou] (#1) [#2]{#3 $\wedge$}}
+\newcommand{\ou}[3]{ \node [etou] (#1)  [#2] {#3 $\vee$}}
+
+\newcommand{\eq}[3]{\node [check] (#1) [#2]{$eq_{#3}$}}
+\newcommand{\peq}[3]{\node [check] (#1) [#2]{ $\overline{eq_{#3}}$}}
+\newcommand{\tl}[3]{\node [check] (#1) [#2]{ $#3$}}
+\newcommand{\ntl}[3]{\node [check] (#1) [#2]{ $\overline{#3}$}}
+\newcommand{\rt}[1]{edge [pre] (#1)}
+\newcommand{\etat}[2]{\node [transition,regular polygon,regular polygon sides=4] (q#1) [#2]  {$q_{#1}$}}
+
+%insert tikz in report
+\newcommand{\inserttikz}[2]{
+\begin{center}
+  \begin{figure}[h]
+    \begin{tikzpicture}[node distance=2.5cm,>=stealth',bend angle=45,auto]
+    \cmdtikz
+    #1
+\end{tikzpicture}
+
+
+
+\caption{#2}
+\end{figure}
+\end{center}
+}
+
+
+
+% highlight edge :
+
+\newcommand{\highe}[4]{\only<{#1}> {\draw[ultra thick,->, %Regular stuff
+preaction={%But before that
+draw,#2,-,% Draw yellow without any arrow head
+double=#2,
+double distance=1\pgflinewidth,
+}] (#3) to (#4);
+}
+}
+
+\newcommand{\hye}[3]{\highe{#1}{yellow}{#2}{#3}}
+
+%highlight thread
+\newcommand{\hyt}[2]{
+\only<#1> {
+\fill[yellow,opacity=0.5] \convexpath{#2.west, #2.east}{15pt};
+
+}
+}
+
+%conex hull
+\pgfdeclarelayer{background}
+\pgfsetlayers{background,main}
+
+
+\newcommand{\convexpath}[2]{
+[   
+    create hullnodes/.code={
+        \global\edef\namelist{#1}
+        \foreach [count=\counter] \nodename in \namelist {
+            \global\edef\numberofnodes{\counter}
+            \node at (\nodename) [draw=none,name=hullnode\counter] {};
+        }
+        \node at (hullnode\numberofnodes) [name=hullnode0,draw=none] {};
+        \pgfmathtruncatemacro\lastnumber{\numberofnodes+1}
+        \node at (hullnode1) [name=hullnode\lastnumber,draw=none] {};
+    },
+    create hullnodes
+]
+($(hullnode1)!#2!-90:(hullnode0)$)
+\foreach [
+    evaluate=\currentnode as \previousnode using \currentnode-1,
+    evaluate=\currentnode as \nextnode using \currentnode+1
+    ] \currentnode in {1,...,\numberofnodes} {
+-- ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode)$)
+  let \p1 = ($(hullnode\currentnode)!#2!-90:(hullnode\previousnode) - (hullnode\currentnode)$),
+    \n1 = {atan2(\x1,\y1)},
+    \p2 = ($(hullnode\currentnode)!#2!90:(hullnode\nextnode) - (hullnode\currentnode)$),
+    \n2 = {atan2(\x2,\y2)},
+    \n{delta} = {-Mod(\n1-\n2,360)}
+  in 
+    {arc [start angle=\n1, delta angle=\n{delta}, radius=#2]}
+}
+-- cycle
+}
+
+
+
+%opening
+\title{}
+\author{}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+\begin{td}
+ I have to fill something sent by my teachers.
+\end{td}
+
+\end{abstract}
+
+
+\section{Introduction.} 
+I try to write this report to be concise and intuitive, the two proofs in the appendix are more formal.
+I may repeat things cause the two proofs are written to be understood without the report.
+\subsection{Problem considered.}
+Usually, studying automatas and formal languages, we work with on a finite alphabet $\Sigma$.
+But words over infinite alphabets are useful models in a variety of contexts in verification and databases.
+That's why we can wonder what happens when we add to the alphabet $\Sigma$ an infinite set $D$.
+An element of $D$ will be called data, and words on $\Sigma \times D$ will be called data words..
+Precisely I studied automaton which are able to register a data and compare it to the current one.
+I had to extend a result on those automaton on data word to a result on $n$-data words, which are words $\Sigma \times D^n$.
+I begin to study three proofs of the emptiness decidability of a set of alternative register automaton on data words: 
+\begin{td}
+ quote 3 proof (1/2)
+\end{td}
+Then I could work on the emptiness decidability of those automaton on a subset of the $n$-data words (the set of ``nested words'').
+To end with I worked on the emptiness decidability of my automaton on $n$-data words.
+\subsection{Proceeding of the internship.} 
+I begin to work in Cachan, I met Sylvain Smith three times to understand the three proofs, after I worked two months in Coventry becoming with Ranko Lazic and helped by Marcin Jurdzinski the two lasts weeks.
+I was meeting them one time a week at the university of Warwick. With Ranko I wrote the two mains proofs of my internship, and with Marcin I worked on this report and the end of the writing of proofs.  
+
+\section{My Definition of Data word.}
+\begin{td}
+  (1/2)
+\end{td}
+\section{Automaton studied.}
+We will study alternative automaton which are able to register a $n$-tuple of data and to compare it (term to term) to the current one.
+Formally we define:
+\begin{df}[Nested Register Automata \textit{NARA}$_n$]
+  A Nested Alternating Register Automaton (\textit{NARA}$_n$) is a tuple : 
+  $\langle (\Sigma ,Q ,q_0, \delta )  \rangle$
+  \begin{itemize}
+   \item $\Sigma$ is an alphabet,
+   \item $Q$ is a finite set of states,
+   \item $q_0$ is the initial state ,
+   \item $ \delta $ is a map from $Q $ to $\mathcal{T} $, where $\mathcal{T}$ is defined by the grammar : 
+   $$ a \ | \  \overline{a} \ | \ Store(q) \ | \ eq_k \ | \  \overline{eq_k} \ | \  q \wedge q' \ | \ q \vee q' \ | \ Move(q)  $$
+  where $a \in \Sigma$, $k \in  \ts$ and $q,q' \in Q$.
+  \end{itemize}
+\end{df}
+
+Intuitively we will see that :
+\begin{itemize}
+   \item $ a \ | \  \overline{a}$ compare the current letter to $a$.
+   \item $eq_k \ | \  \overline{eq_k}$ compare the current data to the registered one (just the $k^{th}$ term).
+   \item $Store(q)$ register the current data.
+   \item $Move(q)$ move on the word.
+   \item $q \vee q' $ allow a choice between two states.
+   \item $q \wedge q'$  duplicate a thread in two different one. 
+\end{itemize}
+
+
+A run is a succession of configuration that we define here :
+
+
+\begin{df}[Configurations of an \textit{NARA}$_n$ and threads]
+For $A$ an \textit{NARA}$_n$ we call configuration on $A$ a tuple  
+ $\langle  a ,x_c, \Delta    \rangle$
+ such that 
+  \begin{itemize}
+    \item $a \in \Sigma$ is the current letter, 
+    \item $x_c\in  \X$ is the current data, 
+    \item $\Delta \in \mathcal{P}_f(\X \times Q)$ is a finite set of threads, where a thread is a pair  
+    $\langle q,x  \rangle$ such that:
+      \begin{itemize}
+	\item $q \in Q$ is the current state of the thread,
+	\item $x\in  \X $ is the data in the register of the thread.
+      \end{itemize}
+   \end{itemize}
+ We write $\C =  \Sigma \times \X \times \mathcal{P}_f(\X \times Q)$, the set of all configurations.
+\end{df}
+
+\begin{td} (1,5)
+  exemples
+\end{td}
+
+\section{proof decidability} 
+
+\begin{td} (2)
+  PROOF
+\end{td}
+
+\section{Proof of undecidability}
+\subsection{PCP To \Lt.}
+
+\begin{thr}[Problem]
+    The emptiness problem for \textit{NARA} on $n$-data is undecidable.
+\end{thr}
+The main idea of the proof is to reduce the following statement of PCP. 
+ \begin{df}[PCP] A PCP problem can be defined like that :
+    \begin{itemize}
+     \item[Input:] $\Gamma$ be a finite alphabet $m \in \mathbb N$ be an integer and $u,v \in {(\Gamma^*)}^m$ be two tuples of pieces.
+     \item[Question:] Does there exist $q \in \mathbb N$ and $h \in \sm ^ q$ such that $u_{h_1}...u_{h_q}  = v_{h_1}...v_{h_q}$.
+    \end{itemize}
+  \end{df}
+  Then we set an input of PCP and we show that there is a solution if and only if the following language \Lu\ is empty.
+  \begin{df}[\Lu] 
+    \Lu $= \{w\#w'\#   \mid    
+     q \in \mathbb N 
+    \mid h \in \sm ^ q \mid \\\
+     w = h_1u_{h_1}...h_qu_{h_q}  
+    \wedge w' = h_1v_{h_1}...h_qv_{h_q}
+    \wedge u_{h_1}...u_{h_q}  = v_{h_1}...v_{h_q}
+    \}$.	
+  \end{df}
+  Hence, to show that our problem is undecidable, it remains to show that we can recognize \Lu.
+  We will see that we are able to recognize \Lu\ cause we are able to recognize the language of double words $ww$.
+  Precisely we will be able to recognize the following language \Lt:
+  \begin{df}[\Lt($\Sigma_1,\Sigma_2$)]
+    Let $\Sigma_1,\Sigma_2$ be two alphabets, 
+    \Lt($\Sigma_1,\Sigma_2$) $= \{w\#w'\# \in (\Sigma_1 \cupdot \Sigma_2)^* \mid \Pi_{\Sigma_1}(w) = \Pi_{\Sigma_1}(w')\}$.
+    Where $\Pi_{\Sigma_1}(w)$ is the projection on $\Sigma_1$ of the word w (ignoring letters of $\Sigma_2$).
+  \end{df}.
+  Indeed when we have shown that \Lt\ is recognizable we have made the harder cause : \Lu\ $=$ \Ld\ $\cap$ \Lt($\Gamma,\sm$) $\cap$ \Lt($\sm,\Gamma$).
+  Where \Ld\ is the following regular language : 
+  \begin{df}[\Ld]
+    We define the language \Ld $= \left(\bigcup\limits_{i\in \sm} iu_i\right)^* \# \left(\bigcup\limits_{i\in \sm} iv_i\right)^* \# $
+  \end{df}
+  \subsection{To recognize \Lt.}
+  We will construct an automaton to recognize \Lt.
+    Intuitively to recognize $w\#w'\#$ with $ \Pi_{\Sigma_1}(w) =\Pi_{\Sigma_1}(w')$, we will open, for all letter of $\Sigma_1$ in $w$, a thread which check that: 
+  \begin{itemize}
+   \item this data won't appear again in $w$ 
+   \item this data appears exactly one time in $w'$
+   \item when it appears, it is on the same letter of $\Sigma_1$.
+  \end{itemize}
+  The main idea here is to use data to represent successive integers with $\sim_0$ and $\sim_1$ as we can see in the following picture, $\sim_0$ (respectively $\sim_1$) represents the successor on an even (respectively odd) number:
+  \begin{td}(1/2)
+    Picture
+  \end{td} 
+  This automaton is doing what we need 
+  \begin{td}
+    explain bloc by bloc
+  \end{td}
+    \inserttikz{
+  \input{countertikz2.tex}
+  }{Automaton recognizing \Lt.}
+  \newpage
+  
+  
+ 
+  
+\section{conclusion} 
+
+  \begin{td}
+    conclude
+  \end{td}
+
+\end{document}

@@ -1,0 +1,38 @@
+
+\newcommand{\mon}[2]{\node [move] (#1) [#2]{On $\Sigma_1$}}
+\newcommand{\egal}[2]{\node [check] (#1) [#2]{$\sim$}}
+
+
+
+\node [draw = none] (nfirst) {};
+\mv {nmon}{right of = nfirst}
+\rt {nfirst};
+\ou {nou}{above of = nmon}{}
+\rt {nmon};
+
+
+\tl {nl}{right of =nou}{\#}
+\rt {nou};
+
+\et {net}{left of=nou}{}
+\rt {nou}
+edge [post] (nmon)
+;
+
+\tl {nntl}{left of =net }{\notin \Sigma_1}
+\rt {net};	
+
+\et {net2}{right of=nou}{}
+\rt {nou}
+;
+
+\tl {nntl2}{right of =net2 }{\in \Sigma_1}
+\rt {net2};	
+
+
+\expl {ddl}{draw=none,below of = nntl2}{}
+\rt{net2};
+
+
+
+

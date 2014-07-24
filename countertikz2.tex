@@ -1,0 +1,77 @@
+\newcommand{\mon}[2]{\node [move] (#1) [#2]{$On \Sigma_1$}}
+\newcommand{\egal}[2]{\node [check] (#1) [#2]{$\sim$}}
+\newcommand{\fake}[2]{\node [dashed, transition , rectangle ] (#1) [#2]{}}
+
+\node [etou] (first) {$\wedge$};
+% \expl {oe1} {below right  of = first}{odd or even }
+% \rt {first};
+ \mon{fmon}{left of = first }
+ edge [post] (first);
+% 
+ \node (begin) [draw = none, left of = fmon] {}
+ edge [post] (fmon);
+
+
+ 
+\expl {rmb} {above of = first}{duplicate($k$)}
+edge [pre] node[left] {($k:=1$)} (first)
+edge [dashed,loop above] node[above]{($k:= 1-k$)} (rmb) ;
+
+
+\expl {dl} {right  of = rmb}{deal}
+edge [pre] node[above] {(k)} (rmb) ;
+
+\expl {suc1} { right  of = dl}{succesor($k$)}
+edge [pre] node[above] {(a)} (dl) ;
+
+
+
+
+
+
+
+\expl {nv1} {right of = suc1}{never}
+ \rt {suc1};
+% \et {et} {right of =nv1} {}
+% \rt {nv1};
+% 
+
+
+\expl {fnd} { right  of = nv1}{found$(k)$}
+\rt {nv1};
+
+
+\expl{eg2} {below of = fnd} {same($a$)}
+\rt {fnd};
+
+\expl {suc1} {below of = eg2}{succesor($k$)}
+\rt {eg2};
+
+
+\expl {nv2} {left of = suc1}{never}
+\rt {suc1};
+
+\tl {l2} {left of = nv2} {\#}
+\rt {nv2};
+
+
+% 
+% \expl {sb} {below  of = et}{check consistency}
+% \rt {et}
+% edge [post] (l2);
+
+
+
+\expl{t0}{right of= first}{deal}
+edge [pre] node[sloped,above] {($k:=0$)} (first);
+
+\expl{et2}{right of= t0}{succesor(0)}
+edge [pre] node[above] {(a)} (t0);
+
+\expl{nv0}{right of= et2}{never}
+\rt {et2}
+edge [post]  (eg2) ;
+
+
+
+

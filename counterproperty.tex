@@ -1,0 +1,62 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[utf8]{inputenc}
+
+
+\begin{document}
+$\forall i \in 1..e$,
+\begin{itemize}
+ \item [Succesor] $f(i_r) \sim_{k} f(i_0+1)$.
+ $(f(i_r) \not \sim_{\overline{k}} f(i_0+1))$
+ \item [Never($\lambda$)]  $  (f(i_r) \not \sim_{\overline{k}} f(i)) \  \wedge \ (f(i_r) \not \sim_{k} f(i))  $. \\\
+    $g(i_e) = \lambda$
+ \item[Found] $i < i_e  \wedge (f(i_r) \not \sim_{\overline{k}} f(i)) \  \wedge \ (f(i_r)  \not \sim_{k} f(i)) $ \\\
+    $ \  ((f(i_r)  \sim_{\overline{k}} f(i_e)) \  \wedge \ (f(i_r) \not \sim_{k} f(i_e))) \wedge \ (f(i_r)  \sim_{2} f(i_e))$.
+ \item[Same($a$)] $(f(i_r) \sim f(i_0+ 1))$ \\\
+  $i_e = i_0 +1$ \\\
+  $g(i_e) = a$
+ 
+\end{itemize}
+
+\begin{itemize}
+ \item $f(i) \sim_k f(i +1)$. 
+ \item $f(i) \not \sim_{\overline k} f(i +1)$.
+ \item $\forall j \in  i+2..n$ $f(i) \not \sim_{\overline k} f(j)$. 
+ \item $\forall j \in  i+2..n$ $f(i) \not \sim_{k} f(j)$.
+
+ \item $\exists i' \in n+1..n'-1$ 
+ 
+ if $i' \neq n'+1$ 
+ \item $f(i'-1) \sim_{\overline k} f(i)$.
+ \item $f(i'-1)  \not \sim_{k} f(i)$.
+ 
+ for all  $i'$ 
+ \item $f(i') \sim_{k} f(i)$.
+ \item $f(i') \sim_{\overline k} f(i)$.
+ \item $f(i') \sim_k f(i' +1)$. 
+ \item $f(i') \not \sim_{\overline k} f(i' +1)$.
+ \item $\forall j \in  i'+2..n'$ $f(i') \not \sim_{\overline k} f(j)$. 
+ \item $\forall j \in  i'+2..n'$ $f(i') \not \sim_{k} f(j)$.
+ 
+ 
+\end{itemize}
+
+$\forall i \exists  ! i' $ such that $f(i) \sim f(i')$.
+exist ... 
+unic..
+
+
+$\sigma(i) = i'$.
+
+
+$\forall i $ $\sigma(i) = i+n+1$
+récurrence
+
+$\forall i $ $g(\sigma(i)) = g(i)$
+
+
+$w = w'$
+
+duble alphabet 
+
+
+\end{document}

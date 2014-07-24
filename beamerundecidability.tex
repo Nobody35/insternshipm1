@@ -1,0 +1,60 @@
+\documentclass{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage{default}
+\newtheorem{thr}{Theorem} %[section]
+\newtheorem{lm}{Lemma}[thr]
+\newtheorem{slm}{Sub-lemma}[lm]
+\newtheorem{sslm}{Sub-sub-lemma}[slm]
+\newtheorem{pp}{Proposition}
+\newtheorem{df}{Definition}
+\newtheorem{rk}{Remark}
+
+\newcommand{\sm}{\{1..m\}}
+\newcommand{\st}{\{1..t\}}
+\newcommand{\sbe}{\{b..e\}}
+\newcommand{\ses}{\{0..s\}}
+\newcommand{\sesp}{\{s+1..s'+s+1\}}
+\newcommand{\cupdot}{\mathbin{\mathaccent\cdot\cup}}
+
+
+\newcommand{\Lu}{$\mathcal{L}_{1}$}
+\newcommand{\Ld}{$\mathcal{L}_{2}$}
+\newcommand{\Lt}{$\mathcal{L}_{3}$}
+
+\begin{document}
+\begin{frame}{Second Theorem.}
+\pause
+  \begin{thr}
+    The emptiness problem for \textit{NARA} on $n$-data is undecidable.
+  \end{thr}
+  \pause
+  
+  \begin{df}[PCP] 
+    \pause
+    \begin{itemize}
+     \item[Input:] $\Gamma$ be a finite alphabet $m \in \mathbb N$ be an integer and $u,v \in {(\Gamma^*)}^m$ be two tupples of pieces. \pause
+     \item[Question:] Does there exist $q \in \mathbb N$ and $h \in {\sm} ^ q$ such that $u_{h_1} \ldots u_{h_q}  = v_{h_1}\ldots v_{h_q}$? \pause
+    \end{itemize}
+  \end{df}
+  Define \Lu\ such that : \Lu $= \emptyset \Leftrightarrow$ the statement of PCP has a solution. \pause \\\
+  \Lu $= \{h_1u_{h_1}\ldots h_qu_{h_q} \pause \# \pause h_1v_{h_1}\ldots h_qv_{h_q} \pause \# \pause  \mid \ u_{h_1}\ldots u_{h_q}  = v_{h_1}\ldots v_{h_q}\}$. \pause \\\
+  \Ld $= \left(\bigcup\limits_{i\in \sm} iu_i\right)^* \# \left(\bigcup\limits_{i\in \sm} iv_i\right)^* \# $.
+\end{frame}
+\begin{frame}{\Lt.}
+  $u_{h_1}\ldots u_{h_q}  = v_{h_1}\ldots v_{h_q}$. \pause \\\
+  $h_1\ldots h_q =h_1\ldots h_q$. \pause \\\
+  \Lt\only<5->{$(\Sigma_1,\Sigma_2)$} = $\{ \only<3>{ww} \only<4>{w\#w\#} \only<5->{w\#w'\#}  \mid \  w \only<5-> {,w'} \in \only<3-4> { \Sigma^*} \only<5-> {(\Sigma_1 \cupdot \Sigma_2)^*} 
+  \only<6-> {\mid \Pi_{\Sigma_1}(w) = \Pi_{\Sigma_1}(w')}	\}$. \pause \pause \pause \pause \\\
+  Then \Lu\ $=$ \pause \Ld\ $\cap$ \pause \Lt($\Gamma,\sm$)   $\cap$ \pause \Lt($\sm,\Gamma$). \pause
+  $\cap$ recognisable. 
+\end{frame}
+\begin{frame}{Successor.}
+ TODO
+\end{frame}
+\begin{frame}{The automata.}
+ TODO
+\end{frame}
+
+  
+\end{document}
